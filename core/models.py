@@ -10,7 +10,7 @@ class Products(models.Model):
     discount_percentage = models.IntegerField()
     
     # image as binary data
-    image = models.BinaryField(null=True, blank=1, editable=True)
+    image = models.BinaryField(null=True, blank=1, editable=False)
     category = models.ForeignKey('ProductCategory', on_delete=models.CASCADE)
 
     # count number of items sold based on orders placed and use it in the field sold

@@ -1,0 +1,71 @@
+{% extends 'layout/base.html' %}
+{% load custom_tags %}
+{% block content %}
+<style>
+ /* .product_image {
+     width: 50%;
+     height: 50%;
+     float: left;
+     margin-right: 10px;
+ }
+ .product_detail {
+     width: 50%;
+     
+     float: right;
+ } */
+</style>
+<!-- image of product on left and description and other details on the right -->
+
+<div class="container-sm">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="#">Products</a></li>
+          <li class="is-active"><a href="#" aria-current="page">{{product.item_name}}</a></li>
+        </ul>
+      </nav>
+    <div class="columns">
+        <div class="column is-one-third">
+            <div class="product_image">
+                <figure class="image is-4by3">
+                    <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
+                </figure>
+            </div>
+        </div>
+        <div class="column">
+            <div class="product_detail">
+                <br>
+                <div class="product_name">
+                    <p class="title is-4">{{product.item_name}}</p>
+                </div>
+                <hr>
+                <div class="product_description">
+                    <p class="is-4">{{product.description}}</p>
+                </div>
+                <hr>
+                <div class="product_price">
+                    <p class="is-4">Price: € {{product.price}}</p>
+                </div>
+                <div class="product_stock">
+                    <p class="is-4">In stock - {{product.stock}}</p>
+                </div>
+                <div class="product_add_to_cart">
+                    <a class="tag is-rounded is-colorful-btn"><i class="fa fa-cart-shopping"></i> Add to cart</a>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    
+    
+</div>
+<script>
+    const breadcrumbLinks = document.querySelectorAll('.breadcrumb a');
+    breadcrumbLinks.forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault(); // Prevent the default link behavior
+        history.back(); // Go back to the previous page
+      });
+    });
+  </script>
+
+{% endblock %}

@@ -79,3 +79,9 @@ def product_category(request, product_category):
         products = Products.objects.filter(category=category_id)
         print(products)
         return render(request, 'products_by_category.html', {'products': products, 'category_name': category_name})
+    
+def product(request, product_id):
+    if request.method == 'GET':
+        product = Products.objects.get(pk=product_id)
+        print(product)
+        return render(request, 'product.html', {'product': product})

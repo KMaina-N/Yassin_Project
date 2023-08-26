@@ -70,7 +70,7 @@
                             <i class="fa fa-circle" aria-hidden="true"></i>
                         </div>
                     </div>
-                    <figure class="image is-4by3">
+                    <figure class="image is-4by3" id="{{product.id}}">
                         <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
                     </figure>
                 </div>
@@ -127,6 +127,15 @@
         // Listen for window resize events and re-adjust columns
         window.addEventListener("resize", adjustColumns);
     </script> -->
-
+    
+    <script>
+        var product = document.querySelectorAll('.product-image figure');
+        product.forEach(function (item) {
+            item.addEventListener('click', function () {
+                var id = item.getAttribute('id');
+                window.location.href = '/product/' + id;
+            });
+        });
+    </script>
 
         {% endblock %}

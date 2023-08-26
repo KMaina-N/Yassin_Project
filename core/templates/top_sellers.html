@@ -1,6 +1,11 @@
 {% load custom_tags %}
 {% if products %}
 {% for product in products %}
+<style>
+    figure:hover {
+        cursor: pointer;
+    }
+</style>
 <div class="list-products">
     <div class="product">
         <div class="product-image">
@@ -12,7 +17,7 @@
                     <i class="fa fa-circle" aria-hidden="true"></i>
                 </div>
             </div>
-            <figure class="image is-4by3">
+            <figure class="image is-4by3" id="{{product.id}}">
                     <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
             </figure>
         </div>

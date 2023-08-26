@@ -109,6 +109,15 @@
       setTimeout(showSlides, 2000); // Change image every 2 seconds
     }
   </script>
+  <script>
+    var product = document.querySelectorAll('.product-image figure');
+    product.forEach(function (item) {
+        item.addEventListener('click', function () {
+            var id = item.getAttribute('id');
+            window.location.href = '/product/' + id;
+        });
+    });
+</script>
 
 </body>
 
