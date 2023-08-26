@@ -19,10 +19,12 @@ def home(request):
     products = Products.objects.all()
     banner = PromoItems.objects.all().last()
     banner = base64.b64encode(banner.promo_image).decode('utf-8')
-    
+    # top 5 best offers
+    best_offers = products[:5]
     context = {
         'products': products,
-        'banner': banner
+        'banner': banner,
+        'best_offers': best_offers
     }
     
     return render(request, 'test.html', context)
@@ -85,3 +87,12 @@ def product(request, product_id):
         product = Products.objects.get(pk=product_id)
         print(product)
         return render(request, 'product.html', {'product': product})
+    
+def add_to_cart(request, product_id):
+    if request.method == 'GET':
+        product = Products.objects.get(pk=product_id)
+        # add the product to the cart
+        cart = Cart.objects.get_or_create(buyer=request.user, ordered=False)
+        # check if the cart exists
+
+        return render(request, 'add_to_cart.html', {'product': product})

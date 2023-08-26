@@ -2,7 +2,9 @@
 {% load custom_tags %}
 {% block content %}
 <style>
-    /* Add spacing between columns */
+    figure:hover {
+        cursor: pointer !important;
+    }
 
 
 
@@ -21,6 +23,7 @@
         }
 
     }
+
 
 
     /* when device is smaller than tablet avoid columns layering on each other*/
@@ -63,12 +66,24 @@
             <div class="product">
                 <div class="product-image">
                     <div class="product-tag">
+                        
                         <div class="product-discount-tag">
+                            {% if product.discount_percentage > 0 %}
                             <p class="tag is-primary is-light">{{product.discount_percentage}}%</p>
+                            {% else %}
+                            <p class="tag is-primary is-light" style="visibility: hidden;">{{product.discount_percentage}}%</p>
+                            {% endif %}
                         </div>
-                        <div class="product-stock-tag">
-                            <i class="fa fa-circle" aria-hidden="true"></i>
+                        
+                        {% if product.stock > 0 %}
+                        <div class="product-stock-tag" style="border: green 1px solid;">
+                            <i class="fa fa-circle" aria-hidden="true" style="color: green"></i>
                         </div>
+                        {% else %}
+                        <div class="product-stock-tag" style="border: red 1px solid;">
+                            <i class="fa fa-circle" aria-hidden="true" style="color: red"></i>
+                        </div>
+                        {% endif %}
                     </div>
                     <figure class="image is-4by3" id="{{product.id}}">
                         <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
@@ -97,10 +112,10 @@
                 <p class="subtitle is-6" style="text-align: center;">No products of the category found</p>
             </div>
         </div>
-            {% endif %}
-        </div>
+        {% endif %}
+    </div>
 
-        <!-- <script>
+    <!-- <script>
         // Function to adjust the number of columns
         function adjustColumns() {
             const screenWidth = window.innerWidth;
@@ -127,7 +142,7 @@
         // Listen for window resize events and re-adjust columns
         window.addEventListener("resize", adjustColumns);
     </script> -->
-    
+
     <script>
         var product = document.querySelectorAll('.product-image figure');
         product.forEach(function (item) {
@@ -138,4 +153,4 @@
         });
     </script>
 
-        {% endblock %}
+    {% endblock %}

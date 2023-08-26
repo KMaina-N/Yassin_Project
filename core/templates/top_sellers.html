@@ -11,14 +11,24 @@
         <div class="product-image">
             <div class="product-tag">
                 <div class="product-discount-tag">
+                    {% if product.discount_percentage > 0 %}
                     <p class="tag is-primary is-light">{{product.discount_percentage}}%</p>
+                    {% else %}
+                    <p class="tag is-primary is-light" style="visibility: hidden;">{{product.discount_percentage}}%</p>
+                    {% endif %}
                 </div>
-                <div class="product-stock-tag">
-                    <i class="fa fa-circle" aria-hidden="true"></i>
-                </div>
+                {% if product.stock > 0 %}
+                        <div class="product-stock-tag" style="border: green 1px solid;">
+                            <i class="fa fa-circle" aria-hidden="true" style="color: green"></i>
+                        </div>
+                        {% else %}
+                        <div class="product-stock-tag" style="border: red 1px solid;">
+                            <i class="fa fa-circle" aria-hidden="true" style="color: red"></i>
+                        </div>
+                        {% endif %}
             </div>
             <figure class="image is-4by3" id="{{product.id}}">
-                    <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
+                <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
             </figure>
         </div>
         <div class="product-content">
