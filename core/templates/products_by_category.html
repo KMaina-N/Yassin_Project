@@ -1,0 +1,132 @@
+{% extends 'layout/base.html' %}
+{% load custom_tags %}
+{% block content %}
+<style>
+    /* Add spacing between columns */
+
+
+
+    /* when on mobile, center the columns */
+    @media screen and (max-width: 768px) {
+        .product {
+            justify-content: center !important;
+            width: auto !important;
+            height: auto !important;
+
+        }
+
+        .columns {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+        }
+
+    }
+
+
+    /* when device is smaller than tablet avoid columns layering on each other*/
+    @media screen and (max-width: 1150px) {
+
+
+        /* columns should reduce if the touch each other */
+        .columns {
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+            justify-content: center !important;
+        }
+    }
+
+    @media screen and (max-width: 1060px) {
+        .columns {
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+            justify-content: center !important;
+        }
+
+        .product {
+            justify-content: center !important;
+            width: auto !important;
+            height: auto !important;
+            flex-wrap: nowrap;
+
+        }
+    }
+</style>
+<span class="container-title">
+    <p class="text-left subtitle is-6">{{category_name}}</p>
+</span>
+<div class="container-sm">
+    <!-- show a grid of products and the images -->
+    <div class="columns is-multiline" id="product-columns">
+        {% if products %}
+        {% for product in products %}
+        <div class="column is-one-quarter">
+            <div class="product">
+                <div class="product-image">
+                    <div class="product-tag">
+                        <div class="product-discount-tag">
+                            <p class="tag is-primary is-light">{{product.discount_percentage}}%</p>
+                        </div>
+                        <div class="product-stock-tag">
+                            <i class="fa fa-circle" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <figure class="image is-4by3">
+                        <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
+                    </figure>
+                </div>
+                <div class="product-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="is-4">{{product.item_name}}</p>
+                            <p class="is-8">In stock - {{product.stock}}</p>
+                        </div>
+                    </div>
+                    <div class="product-price">
+                        <p class="is-4">$ {{product.price}}</p>
+                        <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i> Add to
+                            cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <!-- place a text at the center of the screen saying no products -->
+        <div class="column is-full">
+            <div class="notification is-warning">
+                <p class="subtitle is-6" style="text-align: center;">No products of the category found</p>
+            </div>
+        </div>
+            {% endif %}
+        </div>
+
+        <!-- <script>
+        // Function to adjust the number of columns
+        function adjustColumns() {
+            const screenWidth = window.innerWidth;
+
+            const productColumns = document.getElementById("product-columns");
+
+            if (screenWidth <= 500) {
+                productColumns.classList.add("is-flex-direction-column");
+            } 
+            else if (screenWidth <= 768) {
+                productColumns.classList.add("is-flex-direction-column");
+            } 
+            else {
+                productColumns.classList.remove("is-flex-direction-column");
+            }
+            // else {
+            //     productColumns.classList.remove("is-flex-direction-column");
+            // }
+        }
+
+        // Initial adjustment on page load
+        adjustColumns();
+
+        // Listen for window resize events and re-adjust columns
+        window.addEventListener("resize", adjustColumns);
+    </script> -->
+
+
+        {% endblock %}

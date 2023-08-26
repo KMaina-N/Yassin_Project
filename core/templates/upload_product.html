@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Product</title>
+</head>
+<body>
+    <h1>Upload Product</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="item_name">Item Name: </label>
+        <input type="text" name="item_name"><br>
+        <label for="description">Description: </label>
+        <textarea name="description"></textarea><br>
+        <label for="price">Price: </label>
+        <input type="number" name="price" step="0.01"><br>
+        <label for="stock">Stock: </label>
+        <input type="number" name="stock"><br>
+        <label for="discount">Discount: </label>
+        <input type="checkbox" name="discount"><br>
+        <label for="discount_percentage">Discount Percentage: </label>
+        <input type="number" name="discount_percentage"><br>
+        <label for="image">Image: </label>
+        <input type="file" name="image"><br>
+        <label for="category">Category: </label>
+        <select name="category">
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select><br>
+        <input type="submit" value="Upload">
+    </form>
+</body>
+</html>

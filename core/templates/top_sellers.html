@@ -1,0 +1,34 @@
+{% load custom_tags %}
+{% if products %}
+{% for product in products %}
+<div class="list-products">
+    <div class="product">
+        <div class="product-image">
+            <div class="product-tag">
+                <div class="product-discount-tag">
+                    <p class="tag is-primary is-light">{{product.discount_percentage}}%</p>
+                </div>
+                <div class="product-stock-tag">
+                    <i class="fa fa-circle" aria-hidden="true"></i>
+                </div>
+            </div>
+            <figure class="image is-4by3">
+                    <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
+            </figure>
+        </div>
+        <div class="product-content">
+            <div class="media">
+                <div class="media-content">
+                    <p class="is-4">{{product.item_name}}</p>
+                    <p class="is-8">In stock - {{product.stock}}</p>
+                </div>
+            </div>
+            <div class="product-price">
+                <p class="is-4">$ {{product.price}}</p>
+                <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i> Add to cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}

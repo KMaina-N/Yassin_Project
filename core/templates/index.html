@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hello Bulma!</title>
+  <script src="https://kit.fontawesome.com/66857c785c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
+  <style>
+    body {
+      height: 100vh;
+      font-family: 'Andika', sans-serif;
+    }
+
+    .account {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .account .tag i {
+      margin-right: 10px;
+    }
+
+    .logo-searchbar {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .is-colorful {
+      background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%);
+    }
+
+    /* placeholder of input font style */
+
+    .field.has-addons .control .input {
+      width: 300px;
+    }
+    .field.has-addons .control .input::placeholder {
+      border-radius: 0;
+      /* placeholder fonts style */
+      font-family: 'Andika', sans-serif;
+      font-style: italic;
+      font-size: 14px;
+    }
+
+    .is-colorful-btn {
+      background-image: linear-gradient(-45deg, #ff934b 0%, #ff5e62 100%)
+    }
+
+    .-slider {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mySlides {
+      display: flex;
+      width: 30% !important;
+      height: 50% !important;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .mySlides img {
+      height: 250px !important;
+    }
+
+    .top-products {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      /* set autoflow when card width shrinks */
+      overflow-x: auto;
+      margin: 0 auto;
+      padding: 0 10px;
+      overflow-y: hidden;
+      padding-bottom: 10px;
+      padding-top: 10px;
+    }
+
+    .top-products::-webkit-scrollbar {
+      display: none;
+      background-color: transparent;
+      height: 10px;
+      width: 10px;
+
+    }
+
+    .-icon {
+      padding-top: 10%;
+      position: absolute;
+      z-index: 1;
+
+    }
+
+    .arrow-right {
+      right: 14.5%;
+    }
+
+    .-icon i {
+      background-color: #0cc5b7;
+      padding: 8px 10px 10px 10px;
+      border-radius: 50%;
+      height: 30px;
+      width: 30px;
+      color: aliceblue;
+
+    }
+
+    .-icon i:hover {
+      background-color: black;
+      transform: scale(1.2);
+      cursor: pointer;
+      transition: 1s;
+    }
+
+
+    .container-sm {
+      width: 70%;
+      margin: 0 auto;
+    }
+
+    .container-title {
+      display: flex !important;
+      gap: 5px;
+    }
+
+    .product {
+      width: 200px;
+      height: 300px;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      border-radius: 5px;
+    }
+
+    .product img {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    .product-tag {
+      display: flex;
+      gap: 70%;
+    }
+    .product-stock-tag {
+      border: #ff5e62 solid 1px;
+      border-radius: 5px;
+      height: 20px;
+      width: 20px;margin-top: 2px;
+    }
+
+    .product-stock-tag i {
+      color: #ff5e62;
+      font-size: 10px;
+      margin-left: 4px;
+      margin-top: 5px;
+      display: block;
+    }
+
+    .product-content {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .promo {
+      margin: 0 auto;
+      align-items: center;
+      justify-content: center;
+      width: 75%;
+    }
+
+    .promo img {
+     
+      
+    }
+
+    /* .card {
+      width: 450px !important;
+      height: 300px !important;	
+    }
+
+    .card-image {
+      width: 100px;
+      height: 100px;
+    } */
+  </style>
+</head>
+
+<body>
+
+
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://bulma.io">
+        <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
+        Branding
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item">
+          Home
+        </a>
+
+        <a class="navbar-item">
+          Documentation
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            More
+          </a>
+
+          <div class="navbar-dropdown">
+            <a class="navbar-item">
+              About
+            </a>
+            <a class="navbar-item">
+              Jobs
+            </a>
+            <a class="navbar-item">
+              Contact
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item">
+              Report an issue
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="account">
+            <a class="tag is-link">
+              <i class="fa-solid fa-lock"></i>
+              Sign in
+            </a>
+            <a class="tag is-light">
+              <i class="fa-solid fa-user-plus"></i>
+              Sign up
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- section for searching -->
+  <section class="hero is-colorful">
+    <div class="hero-body">
+      <div class="container">
+        <!-- logo image and searchbar -->
+        <div class="logo-searchbar">
+
+          <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
+          <!-- Safari African and Asian Food Store Zagreb -->
+          <h1 class="title is-4">Safari African and Asian Food Store Zagreb</h1>
+          <!-- searchbar -->
+          <div class="field has-addons">
+            <div class="control">
+              <input class="input" type="text" placeholder="Enter keywords">
+            </div>
+            <div class="control">
+              <a class="button is-colorful-btn">
+                Search
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+
+  <div class="container-sm">
+    <span class="container-title">
+      <p class="text-left subtitle is-6">Top savers</p>
+      <p class="tag is-link">save 20%</p>
+    </span>
+
+    <div class="arrow-left -icon" id="scroll-left-first">
+      <i class="fa fa-chevron-left"></i>
+    </div>
+    <div class="arrow-right -icon" id="scroll-right-first">
+      <i class="fa fa-chevron-right"></i>
+    </div>
+    <div class="top-products">
+
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-1.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Black eyed beans</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-10.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Sweet tamarid</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-100.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Guiness beer</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-101.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Star beer</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-124.jpg" alt="Placeholder image">
+            </figure>
+           
+          </div>
+          <div class="product-content"> ,..
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Some flour</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <section class="section">
+    <!-- promo banner -->
+    <div class="promo">
+      <img src="/promo.png" alt="">
+    </div>
+  </section>
+
+  <div class="container-sm">
+    <span class="container-title">
+      <p class="text-left subtitle is-6">Best offers</p>
+      <p class="tag is-link">save 20%</p>
+    </span>
+
+    <div class="arrow-left -icon" id="scroll-left-second">
+      <i class="fa fa-chevron-left"></i>
+    </div>
+    <div class="arrow-right -icon" id="scroll-right-second">
+      <i class="fa fa-chevron-right"></i>
+    </div>
+    <div class="top-products">
+
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-1.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Black eyed beans</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-10.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Black eyed beans</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-100.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Black eyed beans</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img
+                src="/GLOVO FOTKE_03012023/Product/Wolt_African_and_asian_food_store_retail_shoot_08.12.2022.._Product-101.jpg"
+                alt="Placeholder image">
+            </figure>
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Black eyed beans</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-products">
+        <div class="product">
+          <div class="product-image">
+            <div class="product-tag">
+              <div class="product-discount-tag">
+                <p class="tag is-primary is-light">20%</p>
+              </div>
+              <div class="product-stock-tag">
+                <i class="fa fa-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+            <figure class="image is-4by3">
+              <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+            </figure>
+           
+          </div>
+          <div class="product-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="is-4">Black eyed beans</p>
+                <p class="is-8">In stock - 5kg</p>
+              </div>
+            </div>
+            <div class="product-price">
+              <p class="is-4">$99.99</p>
+              <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i>  Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Get the container element that holds the products
+    const container = document.querySelector('.top-products');
+
+    // Get the scroll amount to move when the arrows are clicked
+    const scrollAmount = 300; // Adjust this value based on your needs
+
+    // Get the scroll direction based on the button clicked there is the first buttons and the second buttons
+    const scroll_first_right = document.getElementById('scroll-right-first');
+    const scroll_first_left = document.getElementById('scroll-left-first');
+    const scroll_second_right = document.getElementById('scroll-right-second');
+    const scroll_second_left = document.getElementById('scroll-left-second');
+
+    // Scroll to the left when the user clicks on the left arrow of the first container
+    scroll_first_left.addEventListener('click', function () {
+      container.scrollBy({
+        top: 0,
+        left: -scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+    scroll_first_right.addEventListener('click', function () {
+      container.scrollBy({
+        top: 0,
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+    scroll_second_left.addEventListener('click', function () {
+      container.scrollBy({
+        top: 0,
+        left: -scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+    scroll_second_right.addEventListener('click', function () {
+      container.scrollBy({
+        top: 0,
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+
+    // document.getElementById('scroll-left').addEventListener('click', function () {
+    //   container.scrollBy({
+    //     top: 0,
+    //     left: -scrollAmount,
+    //     behavior: 'smooth'
+    //   });
+    // });
+
+    // document.getElementById('scroll-right').addEventListener('click', function () {
+    //   container.scrollBy({
+    //     top: 0,
+    //     left: scrollAmount,
+    //     behavior: 'smooth'
+    //   });
+    // });
+
+  </script>
+
+
+  <script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+      let i;
+      let slides = document.getElementsByClassName("mySlides");
+      let dots = document.getElementsByClassName("dot");
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1 }
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+      slides[slideIndex - 1].style.display = "block";
+      dots[slideIndex - 1].className += " active";
+      setTimeout(showSlides, 2000); // Change image every 2 seconds
+    }
+  </script>
+
+</body>
+
+</html>

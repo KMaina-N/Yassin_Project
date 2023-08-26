@@ -1,0 +1,29 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Display Image</title>
+</head>
+<body>
+    <h1>Display Image</h1>
+    {% if image_base64 %}
+    <img src="data:image/jpeg;base64,{{ image_base64 }}" alt="Displayed Image">
+    {% else %}
+    <p>No image found</p>
+    {% endif %}
+</body>
+</html> -->
+{% load custom_tags %}
+<h1>Product List</h1>
+    
+    {% for product in products %}
+        <h2>{{ product.item_name }}</h2>
+        <p>{{ product.description }}</p>
+        <p>Price: ${{ product.price }}</p>
+        <p>Stock: {{ product.stock }}</p>
+        <p>Discount: {% if product.discount %} Yes {% else %} No {% endif %}</p>
+        {% if product.discount %}
+            <p>Discount Percentage: {{ product.discount_percentage }}%</p>
+        {% endif %}
+        <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
+
+    {% endfor %}
