@@ -155,7 +155,7 @@ class Order(models.Model):
     # buyer from the buyer delivery details
     buyer = models.ForeignKey(BuyerDeliveryDetails, on_delete=models.CASCADE, null=True, blank=True)
     buyer_id_order = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-
+    
     def __str__(self):
         return 'Order {}'.format(self.id)
 
@@ -181,17 +181,19 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Products, related_name='order_items', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    # sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    # total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     def __str__(self):
         return '{}'.format(self.id)
     
     def get_cost(self):
         return self.product.price * self.quantity
     
-    # get total cost of the order
-    def get_total_cost(self):
-        return sum(item.get_cost() for item in self.items.all())
+    def save(self, *args, **kwargs):
+        self.sub_total = self.product.price * self.quantity
+        self.total = self.sub_total
+        super(OrderItem, self).save(*args, **kwargs)
+    
     
     # get the products
     

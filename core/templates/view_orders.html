@@ -45,7 +45,7 @@
     }
     }
 </style>
-<div class="table-container">
+<div class="container table-container">
     <table class="table is-hoverable">
         <thead>
             <th>Item ID</th>
@@ -71,5 +71,9 @@
             {% endfor %}
         </tbody>
     </table>
+   <hr> 
+    <div class="total">
+        <p class="is-4">Total: €<span> {{total_cost}}</span></p>
+    </div>
 </div>
 {% endblock %}

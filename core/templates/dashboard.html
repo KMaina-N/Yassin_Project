@@ -1,0 +1,152 @@
+{% load custom_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <script src="https://kit.fontawesome.com/66857c785c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
+  <!-- jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    html {
+      overflow-y: hidden !important;
+    }
+
+    body {
+      height: 100vh;
+      font-family: 'Andika', sans-serif;
+      overflow-x: hidden !important;
+      scroll-behavior: smooth;
+    }
+
+    .products, .orders, .sales {
+      max-height: 200px;
+        overflow-y: auto;
+        overflow-x: auto !important;
+    }
+
+    .table-container {
+        overflow-x: auto !important;
+        justify-content: center;
+        width: 100% !important;
+        font-size: 12px !important;
+
+    }
+
+
+    tbody tr td {
+        line-height: 12px;
+        /* align text vertically */
+        vertical-align: middle;
+    }
+    </style>
+</head>
+<body>
+    {% if request.user.is_superuser %}
+    <div class="nav">
+        {% include 'includes/adminnav.html' %}
+    </div>
+    {% else %}
+    <div class="nav">
+        {% include 'includes/nav.html' %}
+    </div>
+    {% endif %}
+    <div class="container">
+        <h1 class="title">All Products</h1>
+        <div class="products">
+            <table class="table table-container is-hoverable">
+                <thead>
+                    <!-- <td>Item ID</td> -->
+                    <td>Item</td>
+                    <td>In Stock</td>
+                    <td>Price</td>
+                    <td>Image</td>
+                </thead>
+                <tbody>
+                    {% for item in products %}
+                    <tr>
+                        <!-- <td>{{ item.id }}</td> -->
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.stock }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>
+                            <img src="data:image/jpeg;base64,{{ item.image|to_base64 }}" height="101" width="101">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr>
+
+        <h1 class="title">All Orders</h1>
+        <div class="orders">
+            <table class="table table-container is-hoverable">
+                <thead>
+                    <td>Item ID</td>
+                    <td>Item</td>
+                    <td>Buyer</td>
+                    <td>Delivery Address</td>
+                    <td>Payment Method</td>
+                    <td>Email</td>
+                    <td>Phone No.</td>
+                    <td>Action</td>
+                    <!-- <td>Image</td> -->
+                </thead>
+                <tbody>
+                    {% for order in order_items %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.date_ordered| date:"d-m-Y" }} {{order.date_ordered| time:"H:M"}}</td>
+                        <td>{{ order.buyer }}</td>
+                        <td>{{ order.buyer.address }}</td>
+                        <td>{{ order.buyer.payment_method }}</td>
+                        <td>{{ order.buyer.email }}</td>
+                        <td>{{ order.buyer.phone_number }}</td>
+                        <td><a class="tag is-link" href="#">View</a></td>
+                        <!-- <td><a href="#">View</a></td> -->
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr>
+
+        <h1 class="title">Sales</h1>
+        <div class="sales">
+            <table class="table table-container is-hoverable">
+                <thead>
+                    <td>Item ID</td>
+                    <td>Item</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                    <td>Sub Total</td>
+                    <!-- <td>Image</td> -->
+                </thead>
+                <tbody>
+                    {% for order in order_items %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.product.item_name }}</td>
+                        <td>{{ order.quantity }}</td>
+                        <td>{{ order.product.price }}</td>
+                        <td>{{ order.get_cost }}</td>
+                        <!-- <td><a href="#">View</a></td> -->
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>

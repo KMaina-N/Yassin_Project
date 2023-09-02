@@ -179,8 +179,11 @@ def quantity_in_cart(request):
 def view_cart(request):
     context = {}
     if request.user.is_authenticated:
-        cart = Cart.objects.get(user=request.user)
-        cart_items = cart.cartitem_set.all()
+        try: 
+            cart = Cart.objects.get(user=request.user)
+            cart_items = cart.cartitem_set.all()
+        except:
+            cart_items = []
     else:
         cart_id = request.session.get('cart_id')
         if cart_id:
@@ -231,12 +234,6 @@ def remove_from_cart(request):
             return JsonResponse({'success': True, 'total_cost': cart.total})
     return JsonResponse({'success': False})
 
-# to checkout, check if user is authenticated if not require login which is a modal on checkout
-# move the cart to the order
-# delete the cart
-# create an order
-# create order items
-# delete the cart
 def checkout(request):
     if request.method == 'POST':
         
@@ -271,7 +268,12 @@ def checkout(request):
             for item in cart_items:
                 OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
             # delete the cart
-            # cart.delete()
+            for item in cart_items:
+                item.product.sold += item.quantity
+                item.product.save()
+            cart.delete()
+            # increase the sold count of the product
+            
             return redirect('view_orders')
         else:
             cart = AnonymousCart.objects.get(id=request.session['cart_id'])
@@ -281,50 +283,52 @@ def checkout(request):
                 OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
             print(first_name, last_name, email, address, phone_number, postal_code, city)
             # set order session
+            for item in cart_items:
+                item.product.sold += item.quantity
+                item.product.save()
+            cart.delete()
+            
             request.session['order_id'] = order.id
         # create an order
         return redirect('view_orders')
-
+from django.db.models import Sum
 def view_orders(request):
     if request.user.is_authenticated:
         # print(request.user.username)
         orders = Order.objects.filter(buyer_id_order=request.user)
-        order_items = OrderItem.objects.filter(order=orders[0])
+        order_items = OrderItem.objects.filter(order=orders.last())
+        # sum the sub total of the order items
+        total_cost = order_items.aggregate(Sum('sub_total'))
+        # clean the total cost
+        total_cost = total_cost['sub_total__sum']
     else:
         print(request.session['order_id'])
         # return orders for anonymous user
         orders = Order.objects.filter(id= request.session['order_id'])
-        order_items = OrderItem.objects.filter(order=orders[0])
-    return render(request, 'view_orders.html', {'orders': orders, 'order_items': order_items})
+        order_items = OrderItem.objects.filter(order=orders.last())
+        total_cost = order_items.aggregate(Sum('sub_total'))
+        # clean the total cost
+        total_cost = total_cost['sub_total__sum']
+    return render(request, 'view_orders.html', {'orders': orders, 'order_items': order_items, 'total_cost': total_cost})
     
+# dashboard view that shows products, carts, orders, sales, etc
+from django.contrib.auth.decorators import login_required
+@login_required
+def dashboard(request):
+    # get all the products
+    products = Products.objects.all()
+    orders = Order.objects.all()
+    print(orders)
+    order_items = OrderItem.objects.all()
+ 
+    print(order_items)
+    context = {
+        'products': products,
+        'order_items': orders
+    }
 
-# def checkout(request):
-#     if request.method == 'GET':
-#         if request.user.is_authenticated:
-#             cart = Cart.objects.get(user=request.user)
-#             cart_items = cart.cartitem_set.all()
-#             # create an order
-#             order = Order.objects.create(buyer=request.user.username)
-#             for item in cart_items:
-#                 OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
-#             # delete the cart
-#             cart.delete()
-#             return redirect('view_cart')
-#         else:
-#             cart_id = request.session.get('cart_id')
-#             if cart_id:
-#                 cart = AnonymousCart.objects.get(id=cart_id)
-#                 cart_items = cart.anonymouscartitem_set.all()
-#                 # create an order
-#                 order = Order.objects.create(buyer='Anonymous')
-#                 for item in cart_items:
-#                     OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
-#                 # delete the cart
-#                 cart.delete()
-#                 return redirect('view_cart')
-#             else:
-#                 return redirect('view_cart')
-#     return redirect('view_cart')
+    return render(request, 'dashboard.html', context)
+
 
     
 from django.core.files.base import ContentFile
