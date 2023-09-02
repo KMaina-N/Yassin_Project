@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.auth.models import User, AnonymousUser
+import random
 # Create your models here.
 class Products(models.Model):
     item_name = models.CharField(max_length=100)
@@ -43,38 +44,120 @@ class ProductCategory(models.Model):
     class Meta:
         verbose_name_plural = 'Product Categories'
 
-# class Order(models.Model):
-#     name = models.CharField(max_length=100)
-#     email = models.EmailField()
-#     address = models.CharField(max_length=200)
-#     postal_code = models.CharField(max_length=20)
-#     city = models.CharField(max_length=100)
-#     created = models.DateTimeField(auto_now_add=True)
-#     updated = models.DateTimeField(auto_now=True)
-#     paid = models.BooleanField(default=False)
-    
-#     class Meta:
-#         ordering = ('-created',)
-    
-#     def __str__(self):
-#         return 'Order {}'.format(self.id)
-    
-#     def get_total_cost(self):
-#         return sum(item.get_cost() for item in self.items.all())
-    
-
-class Cart(models.Model):
-    date_added = models.DateTimeField(auto_now_add=True)
-    quantity = models.PositiveIntegerField(default=1)
+class CartItem(models.Model):
+    # Allow the cart to be nullable to support anonymous users
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    buyer = models.CharField(max_length=100)
-    ordered = models.BooleanField(default=False)
+    quantity = models.PositiveIntegerField(default=1)
+    sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    def __str__(self):
+        return f"{self.quantity} x {self.product.item_name}"
 
-# order based on the cart
+    # get total cost of the cart item and save it in the total_cost field
+    def save(self, *args, **kwargs):
+        self.sub_total = self.quantity * self.product.price
+        super(CartItem, self).save(*args, **kwargs)
+        if self.cart:
+            self.cart.calculate_total() 
+
+    def delete(self, *args, **kwargs):
+        super(CartItem, self).delete(*args, **kwargs)
+        if self.cart:
+            self.cart.calculate_total()
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    products = models.ManyToManyField(Products, through='CartItem')
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    def __str__(self):
+        if self.user:
+            return f"Cart for {self.user.username}"
+        else:
+            return "Anonymous Cart"
+    def calculate_total(self):
+        cart_items = self.cartitem_set.all()
+        total_cost = sum(item.sub_total for item in cart_items)
+        self.total = total_cost
+        self.save()
+        
+    # def save(self, *args, **kwargs):
+    #     # Update total when adding a new cart item
+    #     self.total = sum([item.sub_total for item in self.cartitem_set.all()])
+    #     super(Cart, self).save(*args, **kwargs)
+
+# Allow the anonymous user to have a cart
+AnonymousUser.cart = property(lambda u: Cart.objects.get_or_create(user=None)[0])
+
+class AnonymousCart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    products = models.ManyToManyField(Products, through='AnonymousCartItem')
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        if self.user:
+            return f"Cart for {self.user.username}"
+        else:
+            return "Anonymous Cart"
+    def calculate_total(self):
+        cart_items = self.anonymouscartitem_set.all()
+        total_cost = sum(item.sub_total for item in cart_items)
+        self.total = total_cost
+        self.save()
+
+class AnonymousCartItem(models.Model):
+    cart = models.ForeignKey('AnonymousCart', on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    def __str__(self):
+        return f"{self.quantity} x {self.product.item_name}"
+
+    # get total cost of the cart item and save it in the total_cost field
+    def save(self, *args, **kwargs):
+        self.sub_total = self.quantity * self.product.price
+        super(AnonymousCartItem, self).save(*args, **kwargs)
+        if self.cart:
+            self.cart.calculate_total() 
+
+    def delete(self, *args, **kwargs):
+        super(AnonymousCartItem, self).delete(*args, **kwargs)
+        if self.cart:
+            self.cart.calculate_total()
+
+class BuyerDeliveryDetails(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone_number = models.IntegerField()
+    email = models.EmailField()
+    address = models.CharField(max_length=200)
+    postal_code = models.CharField(max_length=20)
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100, default='Croatia')
+    payment_method = models.CharField(max_length=100)
+    
+    username = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.first_name + ' ' + self.last_name
+    
+    def save(self, *args, **kwargs):
+        # create username by concatenating first name and last name and adding a random number at the end
+        self.username = self.first_name + self.last_name + str(random.randint(1, 1000))
+        super(BuyerDeliveryDetails, self).save(*args, **kwargs)
+
+# order based on the cart include the details of the buyer entered in the checkout form
 class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
-    buyer = models.CharField(max_length=100)
     ordered = models.BooleanField(default=False)
+    # cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True)
+    # cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True)
+    anonymous_cart = models.ForeignKey(AnonymousCart, on_delete=models.CASCADE, null=True, blank=True)
+    # buyer from the buyer delivery details
+    buyer = models.ForeignKey(BuyerDeliveryDetails, on_delete=models.CASCADE, null=True, blank=True)
+    buyer_id_order = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return 'Order {}'.format(self.id)
 
     def get_total_cost(self):
         cart = Cart.objects.filter(buyer=self.buyer, ordered=False)
@@ -88,44 +171,30 @@ class Order(models.Model):
         total_quantity = 0
         for item in cart:
             total_quantity += item.quantity
+
         return total_quantity
-    
-    def products(self):
+    def get_all_items(self):
         cart = Cart.objects.filter(buyer=self.buyer, ordered=False)
-        products = []
-        for item in cart:
-            products.append(item.product)
-        return products
-
-    def __str__(self):
-        return 'Order {}'.format(self.id)
+        return cart
     
-    class Meta:
-        ordering = ('-date_ordered',)
-
-# order has been made
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Products, related_name='order_items', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    
+    # sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    # total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     def __str__(self):
         return '{}'.format(self.id)
     
     def get_cost(self):
         return self.product.price * self.quantity
     
-# class OrderItem(models.Model):
-#     # order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-#     product = models.ForeignKey(Products, related_name='order_items', on_delete=models.CASCADE)
-#     price = models.DecimalField(max_digits=10, decimal_places=2)
-#     quantity = models.PositiveIntegerField(default=1)
+    # get total cost of the order
+    def get_total_cost(self):
+        return sum(item.get_cost() for item in self.items.all())
     
-#     def __str__(self):
-#         return '{}'.format(self.id)
+    # get the products
     
-#     def get_cost(self):
-#         return self.price * self.quantity
     
 class Contact(models.Model):
     name = models.CharField(max_length=100)
@@ -149,3 +218,27 @@ class PromoItems(models.Model):
     
     class Meta:
         verbose_name_plural = 'Promo Items'
+
+
+class ProductTestUpload(models.Model):
+    product_name = models.CharField(max_length=100)
+    image_binary = models.BinaryField(null=True, blank=1, editable=False)
+
+    class Meta:
+        verbose_name_plural = 'Product Test Upload'
+
+
+# app config variables
+class ConfigVariables(models.Model):
+    store_email = models.EmailField()
+    store_phone = models.CharField(max_length=20, blank=True, null=True)
+    store_address = models.CharField(max_length=200, blank=True, null=True)
+    store_postal_code = models.CharField(max_length=20, blank=True, null=True)
+    store_city = models.CharField(max_length=100, blank=True, null=True)
+    store_country = models.CharField(max_length=100, default='Croatia')
+    store_name = models.CharField(max_length=100, blank=True, null=True)
+    store_description = models.TextField()
+    store_logo = models.BinaryField(null=True, blank=1, editable=False)
+    store_favicon = models.BinaryField(null=True, blank=1, editable=False)
+    store_facebook = models.CharField(max_length=100, blank=True, null=True)
+    store_instagram = models.CharField(max_length=100, blank=True, null=True)

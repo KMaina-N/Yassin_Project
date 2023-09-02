@@ -26,15 +26,6 @@
                                 {{product.discount_percentage}}%</p>
                             {% endif %}
                         </div>
-                        {% if product.stock > 0 %}
-                        <div class="product-stock-tag" style="border: green 1px solid;">
-                            <i class="fa fa-circle" aria-hidden="true" style="color: green"></i>
-                        </div>
-                        {% else %}
-                        <div class="product-stock-tag" style="border: red 1px solid;">
-                            <i class="fa fa-circle" aria-hidden="true" style="color: red"></i>
-                        </div>
-                        {% endif %}
                     </div>
                     <figure class="image is-4by3" id="{{product.id}}">
                         <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
@@ -47,9 +38,9 @@
                             <p class="is-8">In stock - {{product.stock}}</p>
                         </div>
                     </div>
-                    <div class="product-price">
+                    <div class="product-price product_add_to_cart">
                         <p class="is-4">$ {{product.price}}</p>
-                        <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i> Add to
+                        <a class="tag is-rounded is-colorful-btn" data-product-id="{{product.id}}"><i class="fa-solid fa-cart-shopping"></i> Add to
                             cart</a>
                     </div>
                 </div>

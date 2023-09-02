@@ -13,6 +13,44 @@
      
      float: right;
  } */
+.amount_input {
+    /* remove input outline and border */
+    outline: none !important;
+    border: none !important;
+}
+
+.product_amount .has-addons {
+    display: block;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.change_amount_btn {
+    display: flex;
+    text-align: center;
+    gap: 10px;
+}
+
+.plus a, .minus a {
+    /* remove decorations */
+    text-decoration: none !important;
+    /* disable selecting */
+    user-select: none;
+}
+
+ @media screen and (max-width: 768px) {
+    .product_add_to_cart, .product_stock, .product_price {
+    text-align: center;
+ }
+ .product_amount .has-addons {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     gap: 10px;
+ }
+ }
 </style>
 <!-- image of product on left and description and other details on the right -->
 
@@ -48,8 +86,30 @@
                 <div class="product_stock">
                     <p class="is-4">In stock - {{product.stock}}</p>
                 </div>
+                <hr>
+                <!-- toggle amount of products -->
+                <div class="product_amount">
+                    <div class="field has-addons">
+                        <div class="control">
+                            <!-- <input class="amount_input" type="number" value="1"> -->
+                            <p class="is-4 ">Amount: <span class="amount_input">1</span> </p>
+                        </div>
+                        <div class="change_amount_btn">
+                            <div class="control plus">
+                                <a class="tag is-info">
+                                    +
+                                </a>
+                            </div>
+                            <div class="control minus">
+                                <a class="tag is-info">
+                                    -
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 <div class="product_add_to_cart">
-                    <a class="tag is-rounded is-colorful-btn"><i class="fa fa-cart-shopping"></i> Add to cart</a>
+                    <a class="tag is-rounded is-colorful-btn" data-product-id="{{product.id}}"><i class="fa fa-cart-shopping"></i> Add to cart</a>
                 </div>
             </div>
         </div>
@@ -58,14 +118,82 @@
     
     
 </div>
+<script src="/core/static_files/js/main.js"></script>
 <script>
+    // track previous url
+    var previousUrl = document.referrer;
+    console.log(previousUrl);
+
     const breadcrumbLinks = document.querySelectorAll('.breadcrumb a');
     breadcrumbLinks.forEach(link => {
       link.addEventListener('click', event => {
         event.preventDefault(); // Prevent the default link behavior
-        history.back(); // Go back to the previous page
+        // go to previous page not using history
+        window.location.replace(previousUrl);
+
       });
     });
+    // change the amount of products
+    const plus = document.querySelector('.product_amount .plus');
+    const minus = document.querySelector('.product_amount .minus');
+    var input = document.querySelector('.product_amount .amount_input').innerHTML;
+    // convert input to integer
+    input = parseInt(1);
+    input = parseInt(input);
+    plus.addEventListener('click', function() {
+        input = input + 1;
+        document.querySelector('.product_amount .amount_input').innerHTML = input;
+        console.log(input);
+    });
+    minus.addEventListener('click', function() {
+        if (input > 1) {
+            input = input - 1;
+            document.querySelector('.product_amount .amount_input').innerHTML = input;
+        }
+    });
+
+    // add to cart
+//     const addToCartBtn = document.querySelector('.product_add_to_cart a');
+
+//     // addtocartbtn data-product-id
+//     const productId = addToCartBtn.dataset.productId;
+//     addToCartBtn.addEventListener('click', function(){
+//         // ajax request
+//         var url = "/add_to_cart/";
+//         var data = {
+//             'id': productId,
+//             'quantity': input,
+//         }
+//         $.ajax({
+//             url: url,
+//             type: 'POST',
+//             data: data,
+//             dataType: 'json',
+//             success: function(data){
+//                 console.log(data);
+//                 // update the cart amount
+//                 // document.querySelector('.cart .amt').innerHTML = input;
+//             }
+//         })
+
+//         // update quantity in cart
+//         var cart_quantity_url = "/quantity_in_cart/";
+//         // sleep(2 seconds)
+//         setTimeout(function() {
+//     $.ajax({
+//         url: cart_quantity_url,
+//         type: 'GET',
+//         dataType: 'json',
+//         success: function(data){
+//             console.log(data);
+//             document.querySelector('.cart span .amt').innerHTML = data.quantity;
+//         }
+//     });
+// }, 2000); // 2000 milliseconds (2 seconds)
+
+//     })
+    
+
   </script>
 
 {% endblock %}

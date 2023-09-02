@@ -1,64 +1,72 @@
+{% load custom_tags %}
 <!DOCTYPE html>
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %}</title>
-    <script src="https://kit.fontawesome.com/66857c785c.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
-    <!-- jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        body {
-            height: 100vh;
-            font-family: 'Andika', sans-serif;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <script src="https://kit.fontawesome.com/66857c785c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
+  <!-- jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    html {
+      overflow-y: hidden !important;
+    }
 
-        .account {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            gap: 1rem;
-        }
+    body {
+      height: 100vh;
+      font-family: 'Andika', sans-serif;
+      overflow-x: hidden !important;
+      scroll-behavior: smooth;
+    }
 
-        .account .tag i {
-            margin-right: 10px;
-        }
+    .account {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
+    }
 
-        .logo-searchbar {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
+    .account .tag i {
+      margin-right: 10px;
+    }
 
-        .is-colorful {
-            background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%);
-        }
+    .logo-searchbar {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
 
-        /* placeholder of input font style */
+    .is-colorful {
+      background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%);
+    }
 
-        .field.has-addons .control .input {
-            width: 300px;
-        }
+    /* placeholder of input font style */
 
-        .field.has-addons .control .input::placeholder {
-            border-radius: 0;
-            /* placeholder fonts style */
-            font-family: 'Andika', sans-serif;
-            font-style: italic;
-            font-size: 14px;
-        }
+    .field.has-addons .control .input {
+      width: 300px;
+    }
 
-        .is-colorful-btn {
-            background-image: linear-gradient(-45deg, #ff934b 0%, #ff5e62 100%)
-        }
-        .-slider {
+    .field.has-addons .control .input::placeholder {
+      border-radius: 0;
+      /* placeholder fonts style */
+      font-family: 'Andika', sans-serif;
+      font-style: italic;
+      font-size: 14px;
+    }
+
+    .is-colorful-btn {
+      background-image: linear-gradient(-45deg, #ff934b 0%, #ff5e62 100%)
+    }
+
+    .-slider {
       width: 100%;
       height: 100%;
     }
@@ -89,12 +97,25 @@
       padding-top: 10px;
     }
 
-    .top-products::-webkit-scrollbar {
+    /* .top-products::-webkit-scrollbar {
       display: none;
       background-color: transparent;
       height: 10px;
       width: 10px;
 
+    } */
+    .top-products::-webkit-scrollbar {
+      border-radius: 10px;
+      background-color: #0cc5b7;
+      height: 10px;
+      width: 10px;
+    }
+
+    .top-products::-webkit-scrollbar-thumb {
+      border-radius: 50px;
+      background-image: linear-gradient(-45deg, #ff934b 0%, #ff5e62 100%);
+      height: 10px;
+      width: 1px;
     }
 
     .-icon {
@@ -184,46 +205,101 @@
     }
 
     @media screen and (max-width: 768px) {
+      .container-sm {
+        width: 100%;
+      }
+
+      .top-products::-webkit-scrollbar {
+        display: none;
+        background-color: transparent;
+        height: 10px;
+        width: 10px;
+
+      }
+
       .promo {
         width: 100%;
       }
+
       .promo img {
-      width: 100%;
-      height: 100px;
-    }
+        width: 100%;
+        height: 100px;
+      }
     }
 
-    </style>
+    .cart {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+
+    .cart:hover {
+      cursor: pointer;
+    }
+
+    /* the amount of items in the cart appear on top the cart small */
+    .cart .-icon {
+      position: relative;
+    }
+
+    .amt:after {
+      content: attr(value);
+      font-size: 10px;
+      color: #fff;
+      background: red;
+      border-radius: 50%;
+      padding: 2px 5px;
+      position: relative;
+      left: -8px;
+      top: -10px;
+      opacity: 0.9;
+      border: none !important;
+    }
+  </style>
 </head>
 
 <body>
-    {% include 'includes/navigation.html' %}
-    <!-- section for searching -->
-    <section class="hero is-colorful">
-        <div class="hero-body">
-            <div class="container">
-                <!-- logo image and searchbar -->
-                <div class="logo-searchbar">
+  {% include 'includes/navigation.html' %}
+  <!-- section for searching -->
+  <section class="hero is-colorful">
+    <div class="hero-body">
+      <div class="container">
+        <!-- logo image and searchbar -->
+        <div class="logo-searchbar">
 
-                    <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
-                    <!-- Safari African and Asian Food Store Zagreb -->
-                    <h1 class="title is-4">Safari African and Asian Food Store Zagreb</h1>
-                    <!-- searchbar -->
-                    <div class="field has-addons">
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Enter keywords">
-                        </div>
-                        <div class="control">
-                            <a class="button is-colorful-btn">
-                                Search
-                            </a>
-                        </div>
-                    </div>
-                </div>
+          <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
+          <!-- Safari African and Asian Food Store Zagreb -->
+          <h1 class="title is-4">Safari African and Asian Food Store Zagreb</h1>
+          <!-- searchbar -->
+          <div class="field has-addons">
+            <div class="control">
+              <input class="input" type="text" placeholder="Enter keywords">
             </div>
-    </section>
-    {% block content %}
-    {% endblock %}
+            <div class="control">
+              <a class="button is-colorful-btn">
+                Search
+              </a>
+            </div>
+          </div>
+          <div class="cart">
+            <span class="icon">
+              <i class="fas fa-shopping-cart amt" value="{{cart}}"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+  </section>
+  <script>
+    var cart = document.querySelector('.cart');
+    $(document).ready(function() {
+      cart.addEventListener('click', function() {
+        window.location.href = "/view_cart";
+      });
+    });
+  </script>
+  {% block content %}
+  {% endblock %}
+
 </body>
 
 </html>

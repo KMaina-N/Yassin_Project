@@ -10,6 +10,15 @@
 
     /* when on mobile, center the columns */
     @media screen and (max-width: 768px) {
+        .container-sm {
+            justify-content: center !important;
+            width: auto !important;
+            height: auto !important;
+            flex-wrap: nowrap;
+            padding: 10%;
+            /* remove box shadow */
+            box-shadow: none !important;
+        }
         .product {
             justify-content: center !important;
             width: auto !important;
@@ -26,11 +35,8 @@
 
 
 
-    /* when device is smaller than tablet avoid columns layering on each other*/
     @media screen and (max-width: 1150px) {
 
-
-        /* columns should reduce if the touch each other */
         .columns {
             flex-wrap: wrap !important;
             gap: 10px !important;
@@ -75,15 +81,6 @@
                             {% endif %}
                         </div>
                         
-                        {% if product.stock > 0 %}
-                        <div class="product-stock-tag" style="border: green 1px solid;">
-                            <i class="fa fa-circle" aria-hidden="true" style="color: green"></i>
-                        </div>
-                        {% else %}
-                        <div class="product-stock-tag" style="border: red 1px solid;">
-                            <i class="fa fa-circle" aria-hidden="true" style="color: red"></i>
-                        </div>
-                        {% endif %}
                     </div>
                     <figure class="image is-4by3" id="{{product.id}}">
                         <img src="data:image/jpeg;base64,{{ product.image|to_base64 }}" alt="Image">
@@ -96,9 +93,9 @@
                             <p class="is-8">In stock - {{product.stock}}</p>
                         </div>
                     </div>
-                    <div class="product-price">
+                    <div class="product-price product_add_to_cart">
                         <p class="is-4">$ {{product.price}}</p>
-                        <a class="tag is-rounded is-colorful-btn"><i class="fa-solid fa-cart-shopping"></i> Add to
+                        <a class="tag is-rounded is-colorful-btn" data-product-id="{{product.id}}"><i class="fa-solid fa-cart-shopping"></i> Add to
                             cart</a>
                     </div>
                 </div>
@@ -115,34 +112,7 @@
         {% endif %}
     </div>
 
-    <!-- <script>
-        // Function to adjust the number of columns
-        function adjustColumns() {
-            const screenWidth = window.innerWidth;
-
-            const productColumns = document.getElementById("product-columns");
-
-            if (screenWidth <= 500) {
-                productColumns.classList.add("is-flex-direction-column");
-            } 
-            else if (screenWidth <= 768) {
-                productColumns.classList.add("is-flex-direction-column");
-            } 
-            else {
-                productColumns.classList.remove("is-flex-direction-column");
-            }
-            // else {
-            //     productColumns.classList.remove("is-flex-direction-column");
-            // }
-        }
-
-        // Initial adjustment on page load
-        adjustColumns();
-
-        // Listen for window resize events and re-adjust columns
-        window.addEventListener("resize", adjustColumns);
-    </script> -->
-
+    <script src="/core/static_files/js/main.js"></script>
     <script>
         var product = document.querySelectorAll('.product-image figure');
         product.forEach(function (item) {

@@ -1,0 +1,75 @@
+{% extends 'layout/base.html' %}
+{% load custom_tags %}
+{% block content %}
+<style>
+    .table-container {
+        overflow-x: auto !important;
+        justify-content: center;
+
+    }
+    .table {
+        width: 100%;
+        overflow-x: auto !important;
+        
+        
+    }
+    td .has-addons .control .input {
+        width: 50px !important;
+        font-size: 12px !important;
+        outline: none !important;
+        border: none;
+        text-align: center;
+    }
+    td .has-addons .control .button {
+        font-size: 12px !important;
+    }
+    @media screen and (max-width: 768px) {
+        .table-container {
+        overflow-x: auto !important;
+        padding: 20px
+    }
+    .table {
+        max-width: 100%;
+        overflow-x: auto !important;
+        font-size: 12px;
+        
+    }
+    td .has-addons .control .input {
+        width: 30px !important;
+        font-size: 12px !important;
+        outline: none !important;
+        border: none;
+    }
+    td .has-addons .control .button {
+        font-size: 12px !important;
+    }
+    }
+</style>
+<div class="table-container">
+    <table class="table is-hoverable">
+        <thead>
+            <th>Item ID</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Sub Total</th>
+            <th>Image</th>
+        </thead>
+        <tbody>
+            {% for order in order_items %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.product.item_name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.product.price }}</td>
+                <td>{{ order.get_cost }}</td>
+                <!-- <td><a href="#">View</a></td> -->
+                <td>
+                    <img src="data:image/jpeg;base64,{{ order.product.image|to_base64 }}" height="101" width="101">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

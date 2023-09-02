@@ -66,6 +66,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # register the context processor
                 'core.context_processors.categories',
+                'core.context_processors.cart',
             ],
         },
     },
@@ -119,10 +120,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL = 'static/'
+STATIC_URL = 'core/static_files/'
 # STATIC_ROOT = BASE_DIR / 'templates/static'
 STATICFILES_DIRS = [
-    BASE_DIR / 'core/templates/static'
+    BASE_DIR / 'core/static_files'
 ]
 
 # Default primary key field type

@@ -11,7 +11,15 @@
   <style>
     
 
-    
+    .arrow-left, .arrow-right {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 2rem;
+      color: #000;
+      z-index: 1;
+    }
 
     .promo img {}
 
@@ -40,12 +48,12 @@
       <p class="tag is-link">save 20%</p>
     </span>
 
-    <div class="arrow-left -icon" id="scroll-left">
+    <!-- <div class="arrow-left -icon" id="scroll-left">
       <i class="fa fa-chevron-left"></i>
     </div>
     <div class="arrow-right -icon" id="scroll-right">
       <i class="fa fa-chevron-right"></i>
-    </div>
+    </div> -->
     <div class="top-products">
       {% include 'top_sellers.html' %}
 
@@ -65,7 +73,7 @@
   </div>
 
 
-
+  <script src="/core/static_files/js/main.js"></script>
   <script>
     // Get the container element that holds the products
     const container = document.querySelector('.top-products');
@@ -122,6 +130,8 @@
             window.location.href = '/product/' + id;
         });
     });
+
+
 </script>
 
 </body>
