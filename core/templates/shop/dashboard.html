@@ -1,0 +1,91 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+{% if request.user.is_superuser %}
+<section class="hero is-colorful welcome is-small">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Hello, Admin.
+            </h1>
+            <h2 class="subtitle">
+                I hope you are having a great day!
+            </h2>
+        </div>
+    </div>
+</section>
+<section class="info-tiles">
+    <div class="tile is-ancestor has-text-centered">
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">{{active_users}}</p>
+                <p class="subtitle">Online User</p>
+            </article>
+        </div>
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">{{product_counts}}</p>
+                <p class="subtitle">Products</p>
+            </article>
+        </div>
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">{{open_orders}}</p>
+                <p class="subtitle">Open Orders</p>
+            </article>
+        </div>
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">19</p>
+                <p class="subtitle">Exceptions</p>
+            </article>
+        </div>
+    </div>
+</section>
+<div>
+    <hr>
+    <div class="is-6">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Inventory Search
+                </p>
+                <a href="#" class="card-header-icon" aria-label="more options">
+                    <span class="icon">
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                </a>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <div class="control has-icons-left has-icons-right inventory-search">
+                        <input class="input is-small" type="text" placeholder="">
+                        <span class="icon is-medium is-left">
+                            <i class="fa fa-search"></i>
+                        </span>
+                        <span class="icon is-medium is-right">
+                            <i class="fa fa-check"></i>
+                        </span>
+                    </div>
+                    <div class="inventory">
+                        <table id="product-table">
+                            <thead>
+                                <td>Item ID</td>
+                                <td>Item</td>
+                                <td>Stock</td>
+                                <td>Price</td>
+                                <td>Image</td>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

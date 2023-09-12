@@ -1,0 +1,211 @@
+{% load static %}
+{% load custom_tags %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin - SAAFSZ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="../css/admin.css"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        /* html {
+      overflow-y: hidden !important;
+    } */
+
+        body {
+            height: 100vh;
+            font-family: 'Andika', sans-serif;
+            overflow-x: hidden !important;
+            scroll-behavior: smooth;
+        }
+
+        .is-colorful {
+            background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%);
+        }
+        .content-admin {
+            overflow-y: auto;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- START NAV -->
+    <nav class="navbar is-white">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item brand-text" href="#">
+                    Admin
+                </a>
+                <div class="navbar-burger burger" data-target="navMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div id="navMenu" class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item" href="admin.html">
+                        Home
+                    </a>
+                    <a class="navbar-item" href="admin.html">
+                        Orders
+                    </a>
+                    <a class="navbar-item" href="admin.html">
+                        Payments
+                    </a>
+                    <a class="navbar-item" href="admin.html">
+                        Exceptions
+                    </a>
+                    <a class="navbar-item" href="admin.html">
+                        Reports
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+    <!-- END NAV -->
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3 ">
+                <aside class="menu is-hidden-mobile">
+                    <p class="menu-label">
+                        General
+                    </p>
+                    <ul class="menu-list">
+                        <li><a class="" href="/dashboard">Dashboard</a></li>
+                        <li><a class="" href="/products">Products</a></li>
+                        <li><a class="">Sales</a></li>
+                        <li><a class="">Customers</a></li>
+                        <li><a>Other</a></li>
+                    </ul>
+                    <p class="menu-label">
+                        Administration
+                    </p>
+                    <ul class="menu-list">
+                        <!-- <li><a>Team Settings</a></li> -->
+                        <li>
+                            <a>Manage Your Shop</a>
+                            <ul>
+                                <li><a>Web App Configurations</a></li>
+                                <li><a>Plugins</a></li>
+                                <li><a>Add an administrator</a></li>
+                                <li><a>Remove an administrator</a></li>
+                            </ul>
+                        </li>
+                        <!-- <li><a>Invitations</a></li> -->
+                        <li><a>Cloud Storage Environment Settings</a></li>
+                        <li><a>Authentication</a></li>
+                        <li><a>Payments</a></li>
+                    </ul>
+                    <p class="menu-label">
+                        Transactions
+                    </p>
+                    <ul class="menu-list">
+                        <li><a>Payments</a></li>
+                        <li><a>Transfers</a></li>
+                        <li><a>Balance</a></li>
+                        <li><a>Reports</a></li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="column is-9">
+                <!-- <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="../">Bulma</a></li>
+                        <li><a href="../">Templates</a></li>
+                        <li><a href="../">Examples</a></li>
+                        <li class="is-active"><a href="#" aria-current="page">Admin</a></li>
+                    </ul>
+                </nav> -->
+                <div class="content-admin">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script async type="text/javascript" src="../js/bulma.js"></script>
+    <script>
+        //add is-active class to the current page
+        $(document).ready(function () {
+            var url = window.location.pathname;
+            console.log(url);
+            // remove the last slash
+            url = url.substring(0, url.length - 1);
+            console.log(url);
+            $('.menu-list li a[href="' + url + '"]').addClass('is-active');
+        });
+
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            // when the user writes in the search bar for inventory, perform ajax and get the results
+            $('.inventory-search input').keyup(function () {
+                var query;
+                var query = $(this).val().trim(); // Remove leading/trailing white spaces
+                var defaultTable = $('.default-table');
+                // Check if the query is empty
+                if (query === '') {
+                    // Clear the table or hide it when no input is provided
+                    $('#product-table tbody').empty();
+                    return; // Exit the function without making the AJAX call
+                }
+
+                // if query is empty and default table is hidden, show it
+
+                // ajax call
+                $.ajax({
+                    type: "GET",
+                    url: "/search-inventory/",
+                    data: {
+                        'query': query
+                    },
+                    success: function (response) {
+                        // console.log(data.);
+
+                        var productTable = $('#product-table tbody');
+                        productTable.empty(); // Clear existing table rows
+
+                        var products = JSON.parse(response.products);
+                        for (var i = 0; i < products.length; i++) {
+                            var product = products[i];
+                            var row = '<tr>' +
+                                '<td>' + product.id + '</td>' +
+                                '<td>' + product.item_name + '</td>' +
+                                '<td>' + product.stock + '</td>' +
+                                '<td>' + product.price + '</td>' +
+                                '<td><img src="data:image/jpeg;base64,' + product.image + '" width="101" height="101"/></td>' +
+                                '</tr>';
+                            productTable.append(row);
+                        }
+
+                        defaultTable.hide();
+
+                    },
+
+                    // error: function (data) {
+                    //     console.log("error");
+                    // }
+                })
+            });
+        });
+    </script>
+</body>
+
+</html>

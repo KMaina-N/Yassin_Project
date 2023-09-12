@@ -27,6 +27,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# session settings
+SESSION_COOKIE_AGE = 60 * 30 # 2 weeks
+SESSION_COOKIE_SECURE = False
+
+# on browser close, session is deleted
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# session expire
+
+
+
 
 # Application definition
 

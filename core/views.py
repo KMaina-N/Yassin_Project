@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import *
 import base64
 from django.http import JsonResponse
+# import timezone
+from django.utils import timezone
 # Create your views here.
 # def home(request):
 #     products = Products.objects.all()
@@ -22,6 +24,9 @@ def home(request):
     banner = base64.b64encode(banner.promo_image).decode('utf-8')
     # top 5 best offers
     best_offers = products[:5]
+    # create a session for the user and give them a unique key
+    unique_key = generate_unique_key()
+    request.session['unique_key'] = unique_key
     context = {
         'products': products,
         'banner': banner,
@@ -52,10 +57,10 @@ def upload_product(request):
             image=image,
             category=category
         )
-        return redirect('upload_product')
+        return redirect('dashboard')
 
-    categories = ProductCategory.objects.all()
-    return render(request, 'upload_product.html', {'categories': categories})
+    # categories = ProductCategory.objects.all()
+    # return render(request, 'upload_product.html', {'categories': categories})
 
 def upload_promoitems(request):
     # upload to promoitems model
@@ -234,6 +239,8 @@ def remove_from_cart(request):
             return JsonResponse({'success': True, 'total_cost': cart.total})
     return JsonResponse({'success': False})
 
+
+
 def checkout(request):
     if request.method == 'POST':
         
@@ -312,27 +319,63 @@ def view_orders(request):
     return render(request, 'view_orders.html', {'orders': orders, 'order_items': order_items, 'total_cost': total_cost})
     
 # dashboard view that shows products, carts, orders, sales, etc
+from django.contrib.sessions.models import Session
 from django.contrib.auth.decorators import login_required
 @login_required
 def dashboard(request):
     # get all the products
     products = Products.objects.all()
     orders = Order.objects.all()
-    print(orders)
+    # print(orders)
     order_items = OrderItem.objects.all()
- 
+    product_counts = products.count()
+    active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
+    active_session_count = active_sessions.count()
+    open_orders = orders.filter(ordered=False).count()
+    # get all exceptions in the last 24 hours
+
     print(order_items)
     context = {
         'products': products,
-        'order_items': orders
+        'order_items': orders,
+        'open_orders': open_orders,
+        'product_counts': product_counts,
+        'active_users': active_session_count,
     }
 
-    return render(request, 'dashboard.html', context)
+    return render(request, 'shop/dashboard.html', context)
 
+import json
+# search inventory
+def search_inventory(request):
+    if request.method == 'GET':
+        search_term = request.GET['query']
+        print(search_term)
+        # search for the product
+        products = Products.objects.filter(item_name__icontains=search_term)
+        # convert the products to json including the image
+        products = json.dumps([{
+            'id': product.id, 'item_name': product.item_name, 
+            'image': base64.b64encode(product.image).decode('utf-8'),
+            'price': str(product.price), 
+            # 'discount': product.discount,
+            # 'discount_percentage': product.discount_percentage,
+            'stock': str(product.stock),
+            }
+            for product in products])
+        # print(products)
+        return JsonResponse({'products': products})
+    
+def products_admin(request):
+    products = Products.objects.all()
+    return render(request, 'shop/products.html', {'products': products})
 
+def add_products_page(request):
+    # categories = ProductCategory.objects.all()
+    return render(request, 'shop/add_products.html')
     
 from django.core.files.base import ContentFile
-# from .models import ProductTestUpload as Product
+from .models import ProductTestUpload as Product
 
 # loadworkbook
 from openpyxl import load_workbook
@@ -344,8 +387,8 @@ def read_image_as_binary(image_path):
 
 
 def upload_products(request):
-    if request.method == 'POST' and request.FILES.get('excel_file'):
-        excel_file = request.FILES['excel_file']
+    if request.method == 'POST' and request.FILES.get('excel'):
+        excel_file = request.FILES['excel']
         wb = load_workbook(excel_file)
         sheet = wb.active
 
@@ -365,9 +408,10 @@ def upload_products(request):
 
             product.save()
 
-        return HttpResponse('Products uploaded successfully')
+        # return HttpResponse('Products uploaded successfully')
+        return redirect('dashboard')
     
-    return render(request, 'upload_excel.html')
+    # return render(request, 'upload_excel.html')
 
 def product_image(request, pk):
     product = Product.objects.get(id=pk)

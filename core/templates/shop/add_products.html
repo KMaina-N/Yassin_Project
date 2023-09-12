@@ -1,0 +1,148 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Add products{% endblock %}
+{% block content %}
+<section class="hero is-colorful welcome is-small">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Add products
+            </h1>
+            <h2 class="subtitle">
+                Add products to your inventory!
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="is-6">
+    <!-- button to choose method to upload -->
+    
+    <div class="upload-method">
+        
+        <div class="card-content">
+            <div class="content">
+                <p>Choose upload method</p>
+                <div class="field">
+                    <div class="control">
+                        <a class="tag is-link" id="single-upload">Single Upload</a>
+                        <a class="tag is-link" id="excel-upload">Excel Upload</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- upload form -->
+    <div class="upload-single" hidden>
+        <div class="card-content">
+            <div class="content">
+                <!-- form to upload -->
+                <form method="post" enctype="multipart/form-data" action="/upload_product/">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label class="label">Product Name</label>
+                        <div class="control">
+                            <input class="input" type="text" name="item_name"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Description</label>
+                        <div class="control">
+                            <textarea class="textarea" name="description"></textarea><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Price</label>
+                        <div class="control">
+                            <input class="input" type="number" name="price" step="0.01"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Stock</label>
+                        <div class="control">
+                            <input class="input" type="number" name="stock"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Discount</label>
+                        <div class="control">
+                            <input class="input" type="checkbox" name="discount"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Discount Percentage</label>
+                        <div class="control">
+                            <input class="input" type="number" name="discount_percentage"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Image</label>
+                        <div class="control">
+                            <input class="input" type="file" name="image"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Category</label>
+                        <div class="control">
+                            <select class="select" name="category">
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-link" type="submit" value="Upload">
+                        </div>
+                    </div> 
+                </form>
+            </div>
+        </div>
+        
+    </div>
+    <div class="upload-excel" hidden>
+        <div class="card-content">
+            <div class="content">
+                <!-- form to upload -->
+                <form method="post" enctype="multipart/form-data" action="/upload_products/">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label class="label">Upload Excel</label>
+                        <div class="control">
+                            <input class="input" type="file" name="excel"><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-link" type="submit" value="Upload">
+                        </div>
+                    </div> 
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // for url add-products-page make the menu item active
+    $(document).ready(function () {
+        var url = window.location.pathname;
+        if (url == '/add-products-page/') {
+            console.log('url is add-products-page');
+            // href is products
+            $('.menu-list li a[href="/products"]').addClass('is-active');
+        }
+    });
+
+    // show the upload form when the user clicks on the upload button
+    $('#single-upload').click(function () {
+        $('.upload-single').show();
+        $('.upload-excel').hide();
+    });
+    $('#excel-upload').click(function () {
+        $('.upload-single').hide();
+        $('.upload-excel').show();
+    });
+
+</script>
+{% endblock %}

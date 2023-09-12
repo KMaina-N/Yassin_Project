@@ -68,6 +68,8 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     products = models.ManyToManyField(Products, through='CartItem')
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    # cart_ready = models.BooleanField(default=False)
+  
     def __str__(self):
         if self.user:
             return f"Cart for {self.user.username}"
@@ -91,7 +93,8 @@ class AnonymousCart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     products = models.ManyToManyField(Products, through='AnonymousCartItem')
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
+    # cart_ready = models.BooleanField(default=False)
+    
     def __str__(self):
         if self.user:
             return f"Cart for {self.user.username}"

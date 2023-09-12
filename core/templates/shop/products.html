@@ -1,0 +1,85 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}Products{% endblock %}
+{% block content %}
+
+<section class="hero is-colorful welcome is-small">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Inventory
+            </h1>
+            <h2 class="subtitle">
+                See what's in stock!
+            </h2>
+        </div>
+    </div>
+</section>
+
+<div>
+    <hr>
+    <div class="is-6">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    My Inventory
+                </p>
+                
+                <!-- add inventory at the right end -->
+                <div class="add-inventory" style="margin-top: 10px;  margin-right: 5px;">
+                    <a href="/add-products-page" class="button is-small is-link">Add Inventory</a>
+                </div>
+
+                <!-- <a href="#" class="card-header-icon" aria-label="more options">
+                    
+                    <span class="icon">
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                </a> -->
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <div class="control has-icons-left has-icons-right inventory-search">
+                        <input class="input is-small" type="text" placeholder="">
+                        <span class="icon is-medium is-left">
+                            <i class="fa fa-search"></i>
+                        </span>
+                        <span class="icon is-medium is-right">
+                            <i class="fa fa-check"></i>
+                        </span>
+                    </div>
+                    <div class="inventory">
+                        <table id="product-table">
+                            <thead>
+                                <td>Item ID</td>
+                                <td>Item</td>
+                                <td>Stock</td>
+                                <td>Price</td>
+                                <td>Image</td>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated here -->
+                                <div class="default-table">
+                                    {% for item in products %}
+                                <tr>
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.item_name }}</td>
+                                    <td>{{ item.stock }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>
+                                        <img src="data:image/jpeg;base64,{{ item.image|to_base64 }}" height="101" width="101">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
