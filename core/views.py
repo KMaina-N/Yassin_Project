@@ -373,6 +373,10 @@ def products_admin(request):
 def add_products_page(request):
     # categories = ProductCategory.objects.all()
     return render(request, 'shop/add_products.html')
+
+
+def add_category(request):
+    pass
     
 from django.core.files.base import ContentFile
 from .models import ProductTestUpload as Product
