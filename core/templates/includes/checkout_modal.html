@@ -4,13 +4,24 @@
         height: max-content !important;
         border: 5px solid black !important;
     }
+
     .place_order:hover {
         cursor: pointer !important;
     }
+
     .field .control .select select {
-        border: solid green!important;
+        border: solid green !important;
         width: 120px;
     }
+
+    .show-checkout {
+        display: block !important;
+    }
+
+    .hide-checkout {
+        display: none !important;
+    }
+
     @media screen and (max-width: 768px) {
         .modal {
             z-index: 9999 !important;
@@ -20,119 +31,113 @@
         }
     }
 </style>
-    <!-- Your modal content goes here -->
-    <div class="modal" id="myModal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Delivery</p>
-                <button class="delete" aria-label="close" id="closeModal"></button>
-            </header>
-            <section class="modal-card-body">
-                <!-- checkout form -->
-                <!-- a text telling them to sign in -->
-                <p class="has-text-centered">Enter delivery details. <strong>Payment on delivery</strong></p>
-                <form method="POST" action="/checkout/">
-                    {% csrf_token %}
-                    <!-- checkout details -->
-                    <div class="field">
-                        <label class="label">First Name</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="First Name" name="first_name" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Last Name</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Last Name" name="last_name" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Phone Number</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Phone Number" name="phone_number" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Email Address</label>
-                        <div class="control">
-                            <input class="input" type="email" placeholder="Email Address" name="email" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Address</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Address" name="address" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">City</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="City" name="city" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Postal Code</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Zip Code" name="postal_code" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Country</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Country" name="country" required>
-                        </div>
-                    </div>
-                    <!-- payment on delivery only, cash or card -->
-                    <div class="field">
-                        <label class="label">Payment Method</label>
-                        <div class="control">
-                            <div class="select">
-                                <select name="payment_method">
-                                    <option value="cash">Cash</option>
-                                    <option value="card">Card</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- submit button -->
-                    <div class="field">
-                        <div class="control">
-                            <button class="tag is-colorful-btn place_order" style="border: none !important;">Place Order</button>
-                        </div>
-                    </div>
-                    <!-- No account, register -->
-                    <p class="has-text-centered is-5">Don't have an account? <a href="#">Register</a></p>
-
-                </form>
-            </section>
+<!-- Your modal content goes here -->
+<div class="modal hide-checkout" id="myModal">
+    <form method="POST" action="/checkout/">
+        {% csrf_token %}
+        <!-- checkout details -->
+        <div class="field">
+            <label class="label">First Name</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="First Name" name="first_name" required>
+            </div>
         </div>
-    </div>
+        <div class="field">
+            <label class="label">Last Name</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Last Name" name="last_name" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Phone Number</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Phone Number" name="phone_number" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Email Address</label>
+            <div class="control">
+                <input class="input" type="email" placeholder="Email Address" name="email" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Address</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Address" name="address" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">City</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="City" name="city" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Postal Code</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Zip Code" name="postal_code" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Country</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Country" name="country" required>
+            </div>
+        </div>
+        <!-- payment on delivery only, cash or card -->
+        <div class="field">
+            <label class="label">Payment Method</label>
+            <div class="control">
+                <div class="select">
+                    <select name="payment_method">
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        // JavaScript code to handle modal functionality
 
-        // Get references to the modal and its close button
-        var modal = document.getElementById("myModal");
-        var closeModal = document.getElementById("closeModal");
-        var openModal = document.getElementById("openModal");
+        <!-- submit button -->
+        <div class="field">
+            <div class="control">
+                <button class="tag is-colorful-btn place_order" style="border: none !important;">Place Order</button>
+            </div>
+        </div>
+        <!-- No account, register -->
+        <p class="has-text-centered is-5">Don't have an account? <a href="#">Register</a></p>
 
-        // Function to open the modal
-        function open() {
-            modal.classList.add("is-active");
-            document.querySelector("section").style.display = "none";
-        }
+    </form>
+</div>
 
-        // Function to close the modal
-        function close() {
-            modal.classList.remove("is-active");
-        }
+<script>
+    // JavaScript code to handle modal functionality
 
-        // Add click event listeners to open and close the modal
-        openModal.addEventListener("click", open);
-        closeModal.addEventListener("click", close);
-    </script>
+    // Get references to the modal and its close button
+    var modal = document.getElementById("myModal");
+    var closeModal = document.getElementById("closeModal");
+    var openModal = document.getElementById("openModal");
+
+    // Function to open the modal
+    function open() {
+        modal.classList.add("show-checkout");
+        modal.classList.remove("hide-checkout");
+        modal.style.display = "block";
+
+        document.querySelector("section").style.display = "none";
+    }
+
+    // Function to close the modal
+    function close() {
+        modal.classList.remove("show-checkout");
+        modal.classList.add("hide-checkout");
+        document.querySelector("section").style.display = "block";
+    }
+
+    // Add click event listeners to open and close the modal
+    openModal.addEventListener("click", open);
+    closeModal.addEventListener("click", close);
+</script>
 </body>
+
 </html>
