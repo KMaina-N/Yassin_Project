@@ -2,6 +2,7 @@
     .modal {
         z-index: 9999 !important;
         height: max-content !important;
+        border: 5px solid black !important;
     }
     .place_order:hover {
         cursor: pointer !important;
@@ -9,6 +10,14 @@
     .field .control .select select {
         border: solid green!important;
         width: 120px;
+    }
+    @media screen and (max-width: 768px) {
+        .modal {
+            z-index: 9999 !important;
+            height: 100% !important;
+            border: 5px solid black !important;
+            border-radius: 10px;
+        }
     }
 </style>
     <!-- Your modal content goes here -->
