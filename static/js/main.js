@@ -38,7 +38,7 @@ function addToCart(productId) {
                 document.querySelector('.cart span .amt').setAttribute('value', data.quantity);
             }
         });
-    }, 2000); // 2000 milliseconds (2 seconds)
+    }, 1000); // 2000 milliseconds (2 seconds)
 }
 
 // Add event listeners to each element

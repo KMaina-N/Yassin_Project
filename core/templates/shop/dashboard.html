@@ -3,7 +3,7 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 {% if request.user.is_superuser %}
-<section class="hero is-colorful welcome is-small">
+<section class="hero is-colorful welcome is-small is-fixed-top">
     <div class="hero-body">
         <div class="container">
             <h1 class="title">
@@ -37,7 +37,7 @@
         </div>
         <div class="tile is-parent">
             <article class="tile is-child box">
-                <p class="title">19</p>
+                <p class="title">{{exception_count}}</p>
                 <p class="subtitle">Exceptions</p>
             </article>
         </div>

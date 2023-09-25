@@ -4,29 +4,22 @@ import base64
 from django.http import JsonResponse
 # import timezone
 from django.utils import timezone
-# Create your views here.
-# def home(request):
-#     products = Products.objects.all()
-#     if products:
-#         # image_base64 = base64.b64encode(products.image).decode('utf-8')
-#         image_s= products[0].image
-#         image_base64 = base64.b64encode(image_s).decode('utf-8')
-#         # store all the images in a list
-#         images = []
-#         for product in products:
-#             images.append(base64.b64encode(product.image).decode('utf-8'))
-            
-#         return render(request, 'test.html', {'image_base64': images, 'products': products})
-#     return HttpResponse('No image found')
+
 def home(request):
     products = Products.objects.all()
+    print(products)
     banner = PromoItems.objects.all().last()
-    banner = base64.b64encode(banner.promo_image).decode('utf-8')
+    
+    if banner:
+        banner = banner
+        banner = base64.b64encode(banner.promo_image).decode('utf-8')
     # top 5 best offers
     best_offers = products[:5]
     # create a session for the user and give them a unique key
     unique_key = generate_unique_key()
     request.session['unique_key'] = unique_key
+    if products:
+        print('hi')
     context = {
         'products': products,
         'banner': banner,
@@ -34,6 +27,7 @@ def home(request):
     }
     
     return render(request, 'test.html', context)
+    # return render(request, 'test.html')
 def upload_product(request):
     if request.method == 'POST':
         item_name = request.POST['item_name']
@@ -172,7 +166,9 @@ def quantity_in_cart(request):
             cart = cart.cartitem_set.count()
             return JsonResponse({'quantity': cart})
         else:
+            print('anonymous user')
             cart_id = request.session.get('cart_id')
+            print(cart_id)
             if cart_id:
                 cart = AnonymousCart.objects.get(id=cart_id)
                 cart = cart.anonymouscartitem_set.count()
@@ -217,6 +213,7 @@ def update_cart(request):
             return JsonResponse({'success': True, 'sub_total': cart_item.sub_total, 'total_cost': cart_item.cart.total})
         else:
             cart_item = AnonymousCartItem.objects.get(pk=cart_item_id)
+            print(cart_item)
             cart_item.quantity = quantity
             cart_item.save()
         return JsonResponse({'success': True, 'sub_total': cart_item.sub_total, 'total_cost': cart_item.cart.total})
@@ -240,7 +237,7 @@ def remove_from_cart(request):
     return JsonResponse({'success': False})
 
 
-
+from .models import Order, OrderItem, BuyerDeliveryDetails
 def checkout(request):
     if request.method == 'POST':
         
@@ -266,12 +263,13 @@ def checkout(request):
             country=country,
             payment_method=payment_method
         )
-
+        print(buyer)
         # create an order and populate it with the cart items and the buyer delivery details
         if request.user.is_authenticated:
             cart = Cart.objects.get(user=request.user)
             cart_items = cart.cartitem_set.all()
-            order = Order.objects.create(buyer=buyer, buyer_id_order=request.user)
+            order = Order.objects.create(buyer_id_order=request.user, buyer=buyer)
+
             for item in cart_items:
                 OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
             # delete the cart
@@ -310,6 +308,7 @@ def view_orders(request):
         total_cost = total_cost['sub_total__sum']
     else:
         print(request.session['order_id'])
+        print('anonymous user')
         # return orders for anonymous user
         orders = Order.objects.filter(id= request.session['order_id'])
         order_items = OrderItem.objects.filter(order=orders.last())
@@ -332,7 +331,11 @@ def dashboard(request):
     active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
     active_session_count = active_sessions.count()
     open_orders = orders.filter(ordered=False).count()
+
     # get all exceptions in the last 24 hours
+    exceptions = ExceptionLog.objects.filter(exception_date__gte=timezone.now() - timezone.timedelta(hours=24))
+    exception_count = exceptions.count()
+    print(exception_count)
 
     print(order_items)
     context = {
@@ -341,6 +344,7 @@ def dashboard(request):
         'open_orders': open_orders,
         'product_counts': product_counts,
         'active_users': active_session_count,
+        'exception_count': exception_count,
     }
 
     return render(request, 'shop/dashboard.html', context)
@@ -379,9 +383,6 @@ def add_category(request):
     pass
     
 from django.core.files.base import ContentFile
-from .models import ProductTestUpload as Product
-
-# loadworkbook
 from openpyxl import load_workbook
 
 def read_image_as_binary(image_path):
@@ -397,25 +398,130 @@ def upload_products(request):
         sheet = wb.active
 
         for row in sheet.iter_rows(min_row=2, values_only=True):
-            name, image_path = row
-            product = Product(
-                product_name=name,
+            # name, image_path = row
+            # product = Product(
+            #     product_name=name,
+            # )
+            # my model is called Product
+            # upload to the model
+            product = Products(
+                item_name=row[0],
+                description=row[1],
+                price=row[2],
+                stock=row[3],
+                discount=row[4],
+                discount_percentage=row[5],
+                # category=row[6]
             )
+            category_name = row[6]
+            product_category, created = ProductCategory.objects.get_or_create(name=category_name)
+            product.category = product_category
 
-            # Process image_path and read the image as binary
-            print(image_path)
+            image_path = row[7]
             binary_image = read_image_as_binary(image_path)
-            print(binary_image)
-            
-            # Set the binary image data
-            product.image_binary = binary_image
-
-            product.save()
-
-        # return HttpResponse('Products uploaded successfully')
+            print(image_path)
+            if binary_image:
+                product.image = binary_image
+                product.save()
+            else:
+                print(f"Failed to read image for product {product.item_name}")
         return redirect('dashboard')
+    return HttpResponse('No file uploaded')
+
+def edit_product(request, pk):
+    if request.method == 'GET':
+        product = Products.objects.get(id=pk)
+        return render(request, 'shop/edit_product.html', {'product': product})
+    if request.method == 'POST':
+        product = Products.objects.get(id=pk)
+        product.item_name = request.POST['name']
+        product.description = request.POST['description']
+        product.price = request.POST['price']
+        product.stock = request.POST['stock']
+        product.discount = True 
+        product.discount_percentage = request.POST['discount_percentage']
+        image = request.FILES.get('image')
+        print(image)
+        if image:
+            product.image = image.read()
+
+        # product category is obtained from options
+        category_id = request.POST['category']
+        print(category_id)
+        product.save()
+        return redirect('products')
     
-    # return render(request, 'upload_excel.html')
+def delete_product(request, pk):
+    product = Products.objects.get(id=pk)
+    product.delete()
+    # return redirect('products')
+    return JsonResponse({'success': True})
+
+
+def admin_orders(request):
+    orders = Order.objects.all()
+    # buyer of the order
+    return render(request, 'shop/orders.html', {'orders': orders})
+
+def admin_order_details(request, pk):
+    order = Order.objects.get(id=pk)
+    order_items = OrderItem.objects.filter(order=order)
+
+    return render(request, 'shop/order_details.html', {'order_items': order_items})
+
+from itertools import chain
+def admin_carts(request):
+    # combine the two carts
+    carts = []
+    # get the anonymous carts
+    anonymous_carts = AnonymousCart.objects.all()
+    # get the carts
+    ver_carts = Cart.objects.all()
+    # combine the two carts
+    carts = list(chain(anonymous_carts, ver_carts))
+
+
+    return render(request, 'shop/carts.html', {'carts': carts})
+
+def view_admin_cart(request, pk):
+    cart = Cart.objects.get(id=pk)
+    cart_items = cart.cartitem_set.all()
+    return render(request, 'shop/cart_desc.html', {'cart_items': cart_items})
+
+# when admin clicks deliver, the order status changes to delivered and store it in sales and reduce the stock
+def deliver_order(request, pk):
+    order = Order.objects.get(id=pk)
+    order.ordered = True
+    order.save()
+    # reduce the stock
+    order_items = OrderItem.objects.filter(order=order)
+    for item in order_items:
+        product = item.product
+        product.stock -= item.quantity
+        product.save()
+    # store the order in sales
+    Sale.objects.create(order=order)
+    return redirect('orders')
+
+def sales(request):
+    sales = Sale.objects.all()
+    for sale in sales:
+        print(sale.order.buyer_id_order)
+
+    # get the total cost of each sales from the order
+    sales_value = []
+    for sale in sales:
+        order_items = OrderItem.objects.filter(order=sale.order)
+        total_cost = order_items.aggregate(Sum('sub_total'))
+        # clean the total cost
+        total_cost = total_cost['sub_total__sum']
+        sales_value.append(total_cost)
+
+    
+    # combine sale with sales_value
+    # sales = zip(sales, sales_value)
+
+    return render(request, 'shop/sales.html', {'sales': sales, 'sales_items': sales_value})
 
 def product_image(request, pk):
     product = Product.objects.get(id=pk)

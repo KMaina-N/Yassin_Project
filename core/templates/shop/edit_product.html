@@ -1,0 +1,133 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}Edit Product{% endblock %}
+{% block content %}
+<style>
+    .edit-product {
+        margin-bottom: 20px;
+
+    }
+</style>
+<section class="hero is-colorful welcome is-small">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Edit Product
+            </h1>
+            <h2 class="subtitle">
+                Edit your product here!
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="is-6">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                Edit Product
+            </p>
+            
+
+            <!-- <a href="#" class="card-header-icon" aria-label="more options">
+                
+                <span class="icon">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                </span>
+            </a> -->
+        </header>
+        <div class="card-content">
+            <div class="content">
+                <div class="control has-icons-left has-icons-right edit-product">
+                    <!-- form to edit the product -->
+                    <form action="/edit-product/{{ product.id }}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="field">
+                            <label class="label">Product Name</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" value="{{ product.item_name }}">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Product Description</label>
+                            <div class="control">
+                                <textarea class="textarea" name="description">{{ product.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Product Price</label>
+                            <div class="control">
+                                <input class="input" type="text" name="price" value="{{ product.price }}">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Product Stock</label>
+                            <div class="control">
+                                <input class="input" type="text" name="stock" value="{{ product.stock }}">
+                            </div>
+                        </div>
+                        <!-- discount boolean and percentage in two columns -->
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Discount</label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select name="discount">
+                                                <option value="True">True</option>
+                                                <option value="False">False</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Discount Percentage</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="discount_percentage" value="{{ product.discount_percentage }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- product category -->
+                        <div class="field">
+                            <label class="label">Product Category</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select name="category">
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Product Image</label>
+                            <div class="control">
+                                <input class="input" type="file" name="image">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-link">Update Product</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var url = window.location.pathname;
+        // if url contains edit-product
+        if (url.includes('edit-product')) {
+            // href is products
+            $('.menu-list li a[href="/products"]').addClass('is-active');
+        }
+    });
+</script>
+{% endblock %}

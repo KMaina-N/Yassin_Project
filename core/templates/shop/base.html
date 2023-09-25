@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin - SAAFSZ</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/66857c785c.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <!-- Bulma Version 0.9.0-->
     <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
@@ -18,21 +19,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     <style>
         /* html {
       overflow-y: hidden !important;
     } */
 
         body {
-            height: 100vh;
+            height: 100%;
             font-family: 'Andika', sans-serif;
             overflow-x: hidden !important;
+            overflow-y: hidden !important;
             scroll-behavior: smooth;
+        }
+
+        html {
+            overflow-y: hidden !important;
+            overflow-x: hidden !important;
         }
 
         .is-colorful {
             background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%);
         }
+
         .content-admin {
             overflow-y: auto;
             height: 100vh;
@@ -42,9 +52,8 @@
 </head>
 
 <body>
-
     <!-- START NAV -->
-    <nav class="navbar is-white">
+    <nav class="navbar is-white fi is-fixed-top">
         <div class="container">
             <div class="navbar-brand">
                 <a class="navbar-item brand-text" href="#">
@@ -58,20 +67,20 @@
             </div>
             <div id="navMenu" class="navbar-menu">
                 <div class="navbar-start">
-                    <a class="navbar-item" href="admin.html">
-                        Home
+                    <a class="navbar-item" href="/dashboard">
+                        Dashboard
                     </a>
-                    <a class="navbar-item" href="admin.html">
+                    <a class="navbar-item" href="/products">
+                        Products
+                    </a>
+                    <a class="navbar-item" href="/dangling_carts">
+                        Dangling Carts
+                    </a>
+                    <a class="navbar-item" href="/orders">
                         Orders
                     </a>
                     <a class="navbar-item" href="admin.html">
-                        Payments
-                    </a>
-                    <a class="navbar-item" href="admin.html">
-                        Exceptions
-                    </a>
-                    <a class="navbar-item" href="admin.html">
-                        Reports
+                        Sales
                     </a>
                 </div>
 
@@ -79,6 +88,8 @@
         </div>
     </nav>
     <!-- END NAV -->
+    <br>
+    <br>
     <div class="container">
         <div class="columns">
             <div class="column is-3 ">
@@ -89,7 +100,9 @@
                     <ul class="menu-list">
                         <li><a class="" href="/dashboard">Dashboard</a></li>
                         <li><a class="" href="/products">Products</a></li>
-                        <li><a class="">Sales</a></li>
+                        <li><a class="" href="/dangling_carts">Dangling Carts</a></li>
+                        <li><a class="" href="/orders">Orders</a></li>
+                        <li><a class="" href="/sales">Sales</a></li>
                         <li><a class="">Customers</a></li>
                         <li><a>Other</a></li>
                     </ul>
@@ -97,7 +110,6 @@
                         Administration
                     </p>
                     <ul class="menu-list">
-                        <!-- <li><a>Team Settings</a></li> -->
                         <li>
                             <a>Manage Your Shop</a>
                             <ul>
@@ -107,31 +119,13 @@
                                 <li><a>Remove an administrator</a></li>
                             </ul>
                         </li>
-                        <!-- <li><a>Invitations</a></li> -->
                         <li><a>Cloud Storage Environment Settings</a></li>
                         <li><a>Authentication</a></li>
                         <li><a>Payments</a></li>
                     </ul>
-                    <p class="menu-label">
-                        Transactions
-                    </p>
-                    <ul class="menu-list">
-                        <li><a>Payments</a></li>
-                        <li><a>Transfers</a></li>
-                        <li><a>Balance</a></li>
-                        <li><a>Reports</a></li>
-                    </ul>
                 </aside>
             </div>
             <div class="column is-9">
-                <!-- <nav class="breadcrumb" aria-label="breadcrumbs">
-                    <ul>
-                        <li><a href="../">Bulma</a></li>
-                        <li><a href="../">Templates</a></li>
-                        <li><a href="../">Examples</a></li>
-                        <li class="is-active"><a href="#" aria-current="page">Admin</a></li>
-                    </ul>
-                </nav> -->
                 <div class="content-admin">
                     {% block content %}
                     {% endblock %}
@@ -154,6 +148,11 @@
 
     </script>
     <script>
+        var burger = document.querySelector('.navbar-burger');
+        var nav = document.querySelector('.navbar-menu');
+        burger.onclick = function () {
+            nav.classList.toggle('is-active');
+        }
         $(document).ready(function () {
             // when the user writes in the search bar for inventory, perform ajax and get the results
             $('.inventory-search input').keyup(function () {

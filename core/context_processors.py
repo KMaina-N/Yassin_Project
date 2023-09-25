@@ -29,11 +29,16 @@ def cart(request):
         cart_id = request.session.get('cart_id')
         print(cart_id)
         if cart_id:
-            cart = AnonymousCart.objects.get(id=cart_id)
-            cart = cart.anonymouscartitem_set.count()
-            return {
-                'cart': cart
-            }
+            try:
+                cart = AnonymousCart.objects.get(id=cart_id)
+                cart = cart.anonymouscartitem_set.count()
+                return {
+                    'cart': cart
+                }
+            except:
+                return {
+                    'cart': 0
+                }
         else:
             return {
                 'cart': 0

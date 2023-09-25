@@ -68,7 +68,7 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     products = models.ManyToManyField(Products, through='CartItem')
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    # cart_ready = models.BooleanField(default=False)
+    date_of_creation = models.DateTimeField(auto_now_add=True)
   
     def __str__(self):
         if self.user:
@@ -94,7 +94,7 @@ class AnonymousCart(models.Model):
     products = models.ManyToManyField(Products, through='AnonymousCartItem')
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     # cart_ready = models.BooleanField(default=False)
-    
+    date_of_creation = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         if self.user:
             return f"Cart for {self.user.username}"
@@ -140,8 +140,8 @@ class BuyerDeliveryDetails(models.Model):
     
     username = models.CharField(max_length=100, null=True, blank=True)
 
-    def __str__(self):
-        return self.first_name + ' ' + self.last_name
+    # def __str__(self):
+    #     return self.first_name + ' ' + self.last_name
     
     def save(self, *args, **kwargs):
         # create username by concatenating first name and last name and adding a random number at the end
@@ -158,7 +158,7 @@ class Order(models.Model):
     # buyer from the buyer delivery details
     buyer = models.ForeignKey(BuyerDeliveryDetails, on_delete=models.CASCADE, null=True, blank=True)
     buyer_id_order = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    
+    # cost_of_order = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     def __str__(self):
         return 'Order {}'.format(self.id)
 
@@ -180,6 +180,11 @@ class Order(models.Model):
         cart = Cart.objects.filter(buyer=self.buyer, ordered=False)
         return cart
     
+    # def save(self, *args, **kwargs):
+    #     # create username by concatenating first name and last name and adding a random number at the end
+    #     self.cost_of_order = self.get_total_cost()
+    #     super(Order, self).save(*args, **kwargs)
+    
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Products, related_name='order_items', on_delete=models.CASCADE)
@@ -199,7 +204,15 @@ class OrderItem(models.Model):
     
     
     # get the products
-    
+
+# when admin delivers the order, the order is make it as a sale
+class Sale(models.Model):
+    date_of_sale = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    # quantity = models.IntegerField()
+    # product = models.CharField(max_length=100)
+    # total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    # buyer = models.ForeignKey(BuyerDeliveryDetails, on_dele
     
 class Contact(models.Model):
     name = models.CharField(max_length=100)
@@ -247,3 +260,11 @@ class ConfigVariables(models.Model):
     store_favicon = models.BinaryField(null=True, blank=1, editable=False)
     store_facebook = models.CharField(max_length=100, blank=True, null=True)
     store_instagram = models.CharField(max_length=100, blank=True, null=True)
+
+class ExceptionLog(models.Model):
+    name = models.CharField(max_length=100)
+    exception_message = models.TextField()
+    exception_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.exception_name

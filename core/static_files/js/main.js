@@ -1,4 +1,5 @@
 // Select all elements with the class '.product_add_to_cart a'
+console.log('Update some code')
 const addToCartBtns = document.querySelectorAll('.product_add_to_cart a');
 var input = 1
 // Define your common functionality
@@ -38,7 +39,7 @@ function addToCart(productId) {
                 document.querySelector('.cart span .amt').setAttribute('value', data.quantity);
             }
         });
-    }, 2000); // 2000 milliseconds (2 seconds)
+    }, 1000); // 2000 milliseconds (2 seconds)
 }
 
 // Add event listeners to each element

@@ -1,6 +1,7 @@
 {% extends 'layout/base.html' %}
 {% load custom_tags %}
 {% block content %}
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,12 +12,14 @@
             overflow-y: auto;
 
         }
+
         .table {
             width: 100%;
             overflow-x: auto !important;
-            
-            
+
+
         }
+
         td .has-addons .control .input {
             width: 50px !important;
             font-size: 12px !important;
@@ -24,29 +27,37 @@
             border: none;
             text-align: center;
         }
+
         td .has-addons .control .button {
             font-size: 12px !important;
         }
+
         @media screen and (max-width: 768px) {
             .table-container {
-            overflow-x: auto !important;
-            padding: 20px
-        }
-        .table {
-            max-width: 100%;
-            overflow-x: auto !important;
-            font-size: 12px;
-            
-        }
-        td .has-addons .control .input {
-            width: 30px !important;
-            font-size: 12px !important;
-            outline: none !important;
-            border: none;
-        }
-        td .has-addons .control .button {
-            font-size: 12px !important;
-        }
+                overflow-x: auto !important;
+                padding: 20px
+            }
+
+            .table {
+                max-width: 100%;
+                overflow-x: auto !important;
+                font-size: 12px;
+
+            }
+
+            td .has-addons .control .input {
+                width: 30px !important;
+                font-size: 12px !important;
+                outline: none !important;
+                border: none;
+            }
+
+            td .has-addons .control .button {
+                font-size: 12px !important;
+            }
+            .checkout_modal{
+                z-index: 9999 !important;
+            }
         }
     </style>
 </head>
@@ -70,31 +81,32 @@
             <td>{{item.product.price}}</td>
             <td class="sub_total">{{item.sub_total}}</td>
             <td>
-                
-                    <div class="quantity_change">
-                        <!-- minus and plus and quantity at center -->
-                        <div class="field has-addons quantity-field">
-                            <p class="control">
-                                <a class="button is-small decrement-btn">
-                                    <span class="icon is-small">
-                                        <i class="fas fa-minus"></i>
-                                    </span>
-                                </a>
-                            </p>
-                            <p class="control">
-                                <input data-product-id="{{item.id}}" class="input is-small quantity-input" type="number" value="{{item.quantity}}">
-                            </p>
-                            <p class="control">
-                                <a class="button is-small increment-btn">
-                                    <span class="icon is-small">
-                                        <i class="fas fa-plus"></i>
-                                    </span>
-                                </a>
-                            </p>
-                        </div>
-                        
+
+                <div class="quantity_change">
+                    <!-- minus and plus and quantity at center -->
+                    <div class="field has-addons quantity-field">
+                        <p class="control">
+                            <a class="button is-small decrement-btn">
+                                <span class="icon is-small">
+                                    <i class="fas fa-minus"></i>
+                                </span>
+                            </a>
+                        </p>
+                        <p class="control">
+                            <input data-product-id="{{item.id}}" class="input is-small quantity-input" type="number"
+                                value="{{item.quantity}}">
+                        </p>
+                        <p class="control">
+                            <a class="button is-small increment-btn">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                            </a>
+                        </p>
                     </div>
-                   
+
+                </div>
+
             </td>
             <td>
                 <a href="" class="button is-danger is-small">
@@ -104,8 +116,8 @@
                 </a>
             </td>
         </tr>
-        {% endfor %} 
-        {% else %}   
+        {% endfor %}
+        {% else %}
         {% endif %}
     </table>
     <hr>
@@ -118,79 +130,81 @@
         <a class="tag is-colorful-btn" id="openModal">Checkout</a>
         <a href="/" class="tag is-colorful-btn">Continue Shopping</a>
     </div>
-    {% include 'includes/checkout_modal.html' %}
+    <div class="checkout_modal">
+        {% include 'includes/checkout_modal.html' %}
+    </div>
 </div>
 
 <script>
     // Get all quantity field containers
-const quantityFields = document.querySelectorAll('.quantity-field');
+    const quantityFields = document.querySelectorAll('.quantity-field');
 
-quantityFields.forEach((field) => {
-    const decrementBtn = field.querySelector('.decrement-btn');
-    const incrementBtn = field.querySelector('.increment-btn');
-    const quantityInput = field.querySelector('.quantity-input');
+    quantityFields.forEach((field) => {
+        const decrementBtn = field.querySelector('.decrement-btn');
+        const incrementBtn = field.querySelector('.increment-btn');
+        const quantityInput = field.querySelector('.quantity-input');
 
-    // Function to update the cart via AJAX
-    function updateCart() {
-        const productId = quantityInput.dataset.productId;
-        const quantity = parseInt(quantityInput.value);
+        // Function to update the cart via AJAX
+        function updateCart() {
+            const productId = quantityInput.dataset.productId;
+            const quantity = parseInt(quantityInput.value);
 
-        const url = "/update_cart/";
-        const data = {
-            'id': productId,
-            'quantity': quantity,
-        };
+            const url = "/update_cart/";
+            const data = {
+                'id': productId,
+                'quantity': quantity,
+            };
 
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: data,
-            dataType: 'json',
-            success: function (data) {
-                
-                // Update the cart amount or perform other actions as needed
-                // update teh total cost on the clicked row only with id
-                var row = document.getElementById(productId);
-                var subTotal = row.querySelector('.sub_total');
-                console.log(subTotal);
-                subTotal.innerHTML = data.sub_total;
-                console.log(data.sub_total);
-                var totalCost = document.querySelector('.total p span');
-                totalCost.innerHTML = data.total_cost;
-                var quant = row.querySelector('.quantity');
-                quant.innerHTML = quantity;
-                
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function (data) {
 
+                    // Update the cart amount or perform other actions as needed
+                    // update teh total cost on the clicked row only with id
+                    var row = document.getElementById(productId);
+                    var subTotal = row.querySelector('.sub_total');
+                    console.log(subTotal);
+                    subTotal.innerHTML = data.sub_total;
+                    console.log(data.sub_total);
+                    var totalCost = document.querySelector('.total p span');
+                    totalCost.innerHTML = data.total_cost;
+                    var quant = row.querySelector('.quantity');
+                    quant.innerHTML = quantity;
 
 
+
+
+                }
+            });
+        }
+
+        decrementBtn.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                updateCart(); // Trigger AJAX on decrement
             }
         });
-    }
 
-    decrementBtn.addEventListener('click', () => {
-        let currentValue = parseInt(quantityInput.value);
-        if (currentValue > 1) {
-            quantityInput.value = currentValue - 1;
-            updateCart(); // Trigger AJAX on decrement
-        }
-    });
+        incrementBtn.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+            updateCart(); // Trigger AJAX on increment
+        });
 
-    incrementBtn.addEventListener('click', () => {
-        let currentValue = parseInt(quantityInput.value);
-        quantityInput.value = currentValue + 1;
-        updateCart(); // Trigger AJAX on increment
+        // Listen for input changes and trigger AJAX accordingly
+        quantityInput.addEventListener('input', () => {
+            updateCart();
+        });
     });
-
-    // Listen for input changes and trigger AJAX accordingly
-    quantityInput.addEventListener('input', () => {
-        updateCart();
-    });
-});
 
     // delete item from cart
     var deleteBtn = document.querySelectorAll('.is-danger');
-    deleteBtn.forEach(function(item){
-        item.addEventListener('click', function(e){
+    deleteBtn.forEach(function (item) {
+        item.addEventListener('click', function (e) {
             e.preventDefault();
             var id = item.parentElement.parentElement.getAttribute('id');
             var url = "/remove_from_cart/";
@@ -202,14 +216,28 @@ quantityFields.forEach((field) => {
                 type: 'POST',
                 data: data,
                 dataType: 'json',
-                success: function(data){
+                success: function (data) {
                     console.log(data);
+                    console.log('removed');
                     // remove the row from the table
                     var row = document.getElementById(id);
                     row.remove();
                     // update the total cost
                     var totalCost = document.querySelector('.total p span');
                     totalCost.innerHTML = data.total_cost;
+                    var cart_quantity_url = "/quantity_in_cart/";
+                    // sleep(2 seconds)
+                    setTimeout(function () {
+                        $.ajax({
+                            url: cart_quantity_url,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log(data);
+                                document.querySelector('.cart span .amt').attributes[1].value = data.quantity;
+                            }
+                        });
+                    }, 500);
                 }
             })
         })

@@ -1,0 +1,50 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<section class="hero is-colorful welcome is-small is-fixed-top">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Orders
+            </h1>
+            <h2 class="subtitle">
+                See your orders here!
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="card-content">
+    <div class="content">
+        <div class="control has-icons-left has-icons-right inventory-search">
+            <input class="input is-small" type="text" placeholder="">
+            <span class="icon is-medium is-left">
+                <i class="fa fa-search"></i>
+            </span>
+            <span class="icon is-medium is-right">
+                <i class="fa fa-check"></i>
+            </span>
+        </div>
+        <div class="inventory">
+            <table id="product-table">
+                <thead>
+                    <td>Order ID</td>
+                    <td>Sale Date</td>
+                    <td>Order Total</td>
+                    <td>Order Details</td>
+                </thead>
+                <tbody>
+                    {% for order in sales %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.date_of_sale }}</td>
+                        <td>{{ sales_items }}</td>
+                        <td><a href="#" class="button is-small is-link">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

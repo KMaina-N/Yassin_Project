@@ -1,0 +1,62 @@
+{% extends 'shop/base.html' %}
+{% load custom_tags %}
+{% block title %}Order Details{% endblock %}
+{% block content %}
+<section class="hero is-colorful welcome is-small is-fixed-top">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Order Description
+            </h1>
+            <h2 class="subtitle">
+                See your order details here!
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="card-content">
+    <div class="content">
+        <div class="control has-icons-left has-icons-right inventory-search">
+            <input class="input is-small" type="text" placeholder="">
+            <span class="icon is-medium is-left">
+                <i class="fa fa-search"></i>
+            </span>
+            <span class="icon is-medium is-right">
+                <i class="fa fa-check"></i>
+            </span>
+        </div>
+        <div class="inventory">
+            <table id="product-table">
+                <thead>
+                    <td>Product ID</td>
+                    <td>Product Name</td>
+                    <td>Product Price</td>
+                    <td>Product Quantity</td>
+                    <td>Product Total</td>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td>{{ item.product.id }}</td>
+                        <td>{{ item.product.item_name }}</td>
+                        <td>{{ item.product.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.sub_total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var url = window.location.pathname;
+        // if url contains edit-product
+        if (url.includes('order')) {
+            // href is products
+            $('.menu-list li a[href="/orders"]').addClass('is-active');
+        }
+    });
+</script>
+{% endblock %}

@@ -35,6 +35,6 @@ addToCartBtn.addEventListener('click', function () {
                 document.querySelector('.cart span .amt').innerHTML = data.quantity;
             }
         });
-    }, 2000); // 2000 milliseconds (2 seconds)
+    }, 500); // 2000 milliseconds (2 seconds)
 
 })

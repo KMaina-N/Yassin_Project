@@ -1,0 +1,74 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<section class="hero is-colorful welcome is-small is-fixed-top">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Orders
+            </h1>
+            <h2 class="subtitle">
+                See your orders here!
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="card-content">
+    <div class="content">
+        <div class="control has-icons-left has-icons-right inventory-search">
+            <input class="input is-small" type="text" placeholder="">
+            <span class="icon is-medium is-left">
+                <i class="fa fa-search"></i>
+            </span>
+            <span class="icon is-medium is-right">
+                <i class="fa fa-check"></i>
+            </span>
+        </div>
+        <div class="inventory">
+            <table id="product-table">
+                <thead>
+                    <td>Order ID</td>
+                    <td>Order Date</td>
+                    <td>Order Time</td>
+                    <td>Customer</td>
+                    <td>Delivery Location</td>
+                    <td>Payment Method</td>
+                    <td>Order Status</td>
+                    <td>Order Details</td>
+                    <td>Action</td>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.date_ordered |date:"d.m.Y" }}</td>
+                        <td>{{ order.date_ordered |time:"H:i:s" }}</td>
+                        <td>{{ order.buyer.first_name }} {{ order.buyer.last_name }}</td>
+                        <td>{{ order.buyer.address }}, {{ order.buyer.postal_code }}, {{ order.buyer.city }} </td>
+                        <td>
+                            {% if order.payment_method == 'cash' %}
+                            <i class="fa-solid fa-money-bills"></i>
+                            <p style="display: inline;" class="tag is-link"> Cash</p>
+                            {% else %}
+                            <i class="fa-solid fa-credit-card"></i>
+                            <p style="display: inline;" class="tag is-link"> Card</p 
+                            {% endif %} 
+                        </td>
+                        <td>
+                            {% if order.status == True %}
+                            <span class="tag is-success">Completed</span>
+                            {% else %}
+                            <span class="tag is-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td><a href="/order-details/{{order.id}}" class="tag is-small is-link">View</a></td>
+                        <td><a href="/deliver_order/{{order.id}}" class="tag is-success">Deliver</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
