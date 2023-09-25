@@ -248,6 +248,14 @@
         })
     })
 
+    // when modal is open, hide section
+    var modal = document.querySelector('.checkout_modal');
+    var openModal = document.querySelector('#openModal');
+    openModal.addEventListener('click', function () {
+        modal.classList.add('is-active');
+        document.querySelector('section').style.display = 'none';
+    })
+
 </script>
 
 {% endblock %}
