@@ -151,7 +151,7 @@ class BuyerDeliveryDetails(models.Model):
 # order based on the cart include the details of the buyer entered in the checkout form
 class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
-    ordered = models.BooleanField(default=False)
+    delivered = models.BooleanField(default=False)
     # cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True)
     # cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True)
     anonymous_cart = models.ForeignKey(AnonymousCart, on_delete=models.CASCADE, null=True, blank=True)
@@ -213,7 +213,20 @@ class Sale(models.Model):
     # product = models.CharField(max_length=100)
     # total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     # buyer = models.ForeignKey(BuyerDeliveryDetails, on_dele
-    
+
+    # cost of the sale
+
+class DailySales(models.Model):
+    date_of_sale = models.DateField(auto_now_add=True)
+    total_sales = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_quantity = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.date_of_sale)
+
+    class Meta:
+        verbose_name_plural = 'Daily Sales'
+
 class Contact(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()

@@ -1,4 +1,5 @@
 // Select all elements with the class '.product_add_to_cart a'
+console.log('Update some code')
 const addToCartBtns = document.querySelectorAll('.product_add_to_cart a');
 var input = 1
 // Define your common functionality

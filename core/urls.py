@@ -29,6 +29,8 @@ urlpatterns = [
     path('dangling_carts/', views.admin_carts, name='dangling_carts'),
     path('cart_details/<int:pk>', views.view_admin_cart, name='cart_details'),
     path('sales/', views.sales, name='sales'),
+    path('sale_details/<int:pk>', views.sales_details, name='sales_details'),
+    path('admin_login/', views.admin_login, name='admin_login'),
     # path('test/', views.post_test, name='test'),
     
     path('view-cart/', views.view_cart, name='view_cart'),

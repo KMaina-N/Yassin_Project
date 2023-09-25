@@ -40,7 +40,7 @@
                 </thead>
                 <tbody>
                     {% for order in orders %}
-                    <tr>
+                    <tr id="{{order.id}}">
                         <td>{{ order.id }}</td>
                         <td>{{ order.date_ordered |date:"d.m.Y" }}</td>
                         <td>{{ order.date_ordered |time:"H:i:s" }}</td>
@@ -52,9 +52,7 @@
                             <p style="display: inline;" class="tag is-link"> Cash</p>
                             {% else %}
                             <i class="fa-solid fa-credit-card"></i>
-                            <p style="display: inline;" class="tag is-link"> Card</p 
-                            {% endif %} 
-                        </td>
+                            <p style="display: inline;" class="tag is-link"> Card</p {% endif %} </td>
                         <td>
                             {% if order.status == True %}
                             <span class="tag is-success">Completed</span>
@@ -63,7 +61,10 @@
                             {% endif %}
                         </td>
                         <td><a href="/order-details/{{order.id}}" class="tag is-small is-link">View</a></td>
-                        <td><a href="/deliver_order/{{order.id}}" class="tag is-success">Deliver</a></td>
+                        <!-- <td><a href="/deliver_order/{{order.id}}" class="tag is-success">Deliver</a></td> -->
+                        <td>
+                            <a class="tag is-success" onclick="confirmDeliver('{{order.id}}')">Deliver</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -71,4 +72,75 @@
         </div>
     </div>
 </div>
+<!-- script with alert that asks user to confirm, oncofirm, do deliver_order/ using ajax -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    function confirmDeliver(orderId) {
+        // swal fire
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#00d1b2',
+            cancelButtonColor: '#ff3860',
+            confirmButtonText: 'Yes, deliver it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // ajax call to deliver_order
+                var order_id = orderId;
+                // var order_id = $(this).attr('id');
+                console.log(order_id);
+                var url = '/deliver_order/' + order_id;
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (data) {
+                        Swal.fire(
+                            {
+                                title: 'Delivered!',
+                                text: 'Order has been delivered.',
+                                icon: 'success',
+                                confirmButtonColor: '#00d1b2',
+                                timer: 3000, // Set a 3-second timer
+                                timerProgressBar: true,
+                            }
+                        ).then((result) => {
+                            // hide the row
+                            var row = document.getElementById(orderId);
+                            row.style.display = 'none';
+                        })
+                        // location.reload();
+                    }
+                });
+            }
+        })
+    }
+
+
+    // $(document).ready(function () {
+    //     var url = window.location.pathname;
+    //     // if url contains edit-product
+    //     if (url.includes('orders')) {
+    //         // href is products
+    //         $('.menu-list li a[href="/orders"]').addClass('is-active');
+    //     }
+    // });
+    // ajax call to deliver_order
+    // $(document).ready(function () {
+    //     $('.tag.is-success').click(function () {
+    //         var order_id = $(this).attr('id');
+    //         var url = '/deliver_order/' + order_id;
+    //         $.ajax({
+    //             url: url,
+    //             type: 'GET',
+    //             success: function (data) {
+    //                 alert('Order Delivered');
+    //                 location.reload();
+    //             }
+    //         });
+    //     });
+    // });
+</script>
+
 {% endblock %}

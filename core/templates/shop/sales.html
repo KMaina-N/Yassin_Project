@@ -2,6 +2,26 @@
 {% load static %}
 {% block title %}Orders{% endblock %}
 {% block content %}
+<style>
+    .body {
+        min-height: max-content !important;
+        overflow-y: auto;
+        padding-bottom: 50px !important;
+    }
+
+    .inventory {
+        overflow-x: auto !important;
+        justify-content: center;
+        overflow-y: auto;
+        min-height: 100vh !important;
+
+    }
+
+    .table {
+        width: 100%;
+        overflow-x: auto !important;
+    }
+</style>
 <section class="hero is-colorful welcome is-small is-fixed-top">
     <div class="hero-body">
         <div class="container">
@@ -30,16 +50,18 @@
                 <thead>
                     <td>Order ID</td>
                     <td>Sale Date</td>
-                    <td>Order Total</td>
+                    <td>Customer</td>
+                    <td>Sale Value</td>
                     <td>Order Details</td>
                 </thead>
                 <tbody>
-                    {% for order in sales %}
+                    {% for sale in sales %}
                     <tr>
-                        <td>{{ order.id }}</td>
-                        <td>{{ order.date_of_sale }}</td>
-                        <td>{{ sales_items }}</td>
-                        <td><a href="#" class="button is-small is-link">View</a></td>
+                        <td>{{ sale.id }}</td>
+                        <td>{{ sale.date_of_sale }}</td>
+                        <td>{{ sale.order.buyer.first_name }} {{ sale.order.buyer.last_name }}</td>
+                        <td>{{ sale.order. }}</td>
+                        <td><a href="/sale_details/{{sale.id}}" class="button is-small is-link">View</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

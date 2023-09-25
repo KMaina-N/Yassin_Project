@@ -46,7 +46,12 @@
     }
 
     .is-colorful {
-      background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%);
+      /* background-image: linear-gradient(-45deg, #0cc5b7 0%, #2bd891 100%); */
+      background-image: url('/static/images/header_1.jpg');
+      background-size: cover;
+      background-repeat: no-repeat !important;
+      /* make it opaqued */
+      
     }
 
     /* placeholder of input font style */
@@ -65,6 +70,7 @@
 
     .is-colorful-btn {
       background-image: linear-gradient(-45deg, #ff934b 0%, #ff5e62 100%)
+      
     }
 
     .-slider {
@@ -270,7 +276,7 @@
 
           <!-- <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"> -->
           <!-- Safari African and Asian Food Store Zagreb -->
-          <h1 class="title is-4">Safari African and Asian Food Store Zagreb</h1>
+          <h1 class="title is-4 has-text-white">Safari African and Asian Food Store Zagreb</h1>
           <!-- searchbar -->
           <div class="field has-addons">
             <div class="control">
@@ -284,7 +290,7 @@
           </div>
           <div class="cart">
             <span class="icon">
-              <i class="fas fa-shopping-cart amt" value="{{cart}}"></i>
+              <i class="fas fa-shopping-cart amt has-text-white" value="{{cart}}"></i>
             </span>
           </div>
         </div>

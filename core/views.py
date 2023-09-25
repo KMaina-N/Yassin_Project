@@ -232,6 +232,8 @@ def remove_from_cart(request):
             return JsonResponse({'success': True, 'total_cost': cart.total})
         else:
             cart_item = AnonymousCartItem.objects.get(pk=cart_item_id)
+            cart = cart_item.cart
+            cart.total -= cart_item.sub_total
             cart_item.delete()
             return JsonResponse({'success': True, 'total_cost': cart.total})
     return JsonResponse({'success': False})
@@ -330,7 +332,7 @@ def dashboard(request):
     product_counts = products.count()
     active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
     active_session_count = active_sessions.count()
-    open_orders = orders.filter(ordered=False).count()
+    open_orders = orders.filter(delivered=False).count()
 
     # get all exceptions in the last 24 hours
     exceptions = ExceptionLog.objects.filter(exception_date__gte=timezone.now() - timezone.timedelta(hours=24))
@@ -459,7 +461,7 @@ def delete_product(request, pk):
 
 
 def admin_orders(request):
-    orders = Order.objects.all()
+    orders = Order.objects.filter(delivered=False)
     # buyer of the order
     return render(request, 'shop/orders.html', {'orders': orders})
 
@@ -467,7 +469,12 @@ def admin_order_details(request, pk):
     order = Order.objects.get(id=pk)
     order_items = OrderItem.objects.filter(order=order)
 
-    return render(request, 'shop/order_details.html', {'order_items': order_items})
+    # cost of the order
+    total_cost = order_items.aggregate(Sum('sub_total'))
+    # return int and float not dict
+    total_cost = total_cost['sub_total__sum']
+    print(total_cost)
+    return render(request, 'shop/order_details.html', {'order_items': order_items, 'total_cost': total_cost})
 
 from itertools import chain
 def admin_carts(request):
@@ -484,14 +491,22 @@ def admin_carts(request):
     return render(request, 'shop/carts.html', {'carts': carts})
 
 def view_admin_cart(request, pk):
-    cart = Cart.objects.get(id=pk)
-    cart_items = cart.cartitem_set.all()
-    return render(request, 'shop/cart_desc.html', {'cart_items': cart_items})
+    try: 
+        cart = Cart.objects.get(id=pk)
+        cart_items = cart.cartitem_set.all()
+    except:
+        cart = AnonymousCart.objects.get(id=pk)
+        cart_items = cart.anonymouscartitem_set.all()
+    # cart_items = cart.cartitem_set.all()
+    total_cost = cart_items.aggregate(Sum('sub_total'))
+    # return int and float not dict
+    total_cost = total_cost['sub_total__sum'] 
+    return render(request, 'shop/cart_desc.html', {'cart_items': cart_items, 'total_cost': total_cost})
 
 # when admin clicks deliver, the order status changes to delivered and store it in sales and reduce the stock
 def deliver_order(request, pk):
     order = Order.objects.get(id=pk)
-    order.ordered = True
+    order.deliverd = True
     order.save()
     # reduce the stock
     order_items = OrderItem.objects.filter(order=order)
@@ -501,27 +516,45 @@ def deliver_order(request, pk):
         product.save()
     # store the order in sales
     Sale.objects.create(order=order)
+    date_of_sale = timezone.now()
+    total_sales = order_items.aggregate(Sum('sub_total'))
+    total_quantity = order_items.aggregate(Sum('quantity'))
+    total_sales = total_sales['sub_total__sum']
+    total_quantity = total_quantity['quantity__sum']
+    DailySales.objects.create(date_of_sale=date_of_sale, total_sales=total_sales, total_quantity=total_quantity)
     return redirect('orders')
 
 def sales(request):
     sales = Sale.objects.all()
-    for sale in sales:
-        print(sale.order.buyer_id_order)
 
-    # get the total cost of each sales from the order
-    sales_value = []
-    for sale in sales:
-        order_items = OrderItem.objects.filter(order=sale.order)
-        total_cost = order_items.aggregate(Sum('sub_total'))
-        # clean the total cost
-        total_cost = total_cost['sub_total__sum']
-        sales_value.append(total_cost)
+    return render(request, 'shop/sales.html', {'sales': sales})
+
+def sales_details(request, pk):
+    sale = Sale.objects.get(id=pk)
+    order_items = OrderItem.objects.filter(order=sale.order)
+    total_cost = order_items.aggregate(Sum('sub_total'))
+    # clean the total cost
+    total_cost = total_cost['sub_total__sum']
 
     
-    # combine sale with sales_value
-    # sales = zip(sales, sales_value)
+    return render(request, 'shop/sales_details.html', {'sale': sale, 'order_items': order_items, 'total_cost': total_cost})
 
-    return render(request, 'shop/sales.html', {'sales': sales, 'sales_items': sales_value})
+def daily_sales_statistics(request):
+    pass
+
+from django.contrib.auth import authenticate, login
+def admin_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        # authenticate the user
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return redirect('admin_login')
+    return render(request, 'shop/admin_login.html')
 
 def product_image(request, pk):
     product = Product.objects.get(id=pk)

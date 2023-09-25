@@ -1,15 +1,15 @@
 {% extends 'shop/base.html' %}
-{% load static %}
-{% block title %}Cart Details{% endblock %}
+{% load custom_tags %}
+{% block title %}Order Details{% endblock %}
 {% block content %}
 <section class="hero is-colorful welcome is-small is-fixed-top">
     <div class="hero-body">
         <div class="container">
             <h1 class="title">
-                Cart Description
+                Sale Description
             </h1>
             <h2 class="subtitle">
-                See your cart details here!
+                See your sale details here!
             </h2>
         </div>
     </div>
@@ -35,7 +35,7 @@
                     <td>Product Total</td>
                 </thead>
                 <tbody>
-                    {% for item in cart_items %}
+                    {% for item in order_items %}
                     <tr>
                         <td>{{ item.product.id }}</td>
                         <td>{{ item.product.item_name }}</td>
@@ -46,7 +46,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <div class="cart-total">
+            <div class="sale-total">
                 <p class="title is-4">Total: {{ total_cost }}</p>
             </div>
         </div>
@@ -56,9 +56,9 @@
     $(document).ready(function () {
         var url = window.location.pathname;
         // if url contains edit-product
-        if (url.includes('cart')) {
+        if (url.includes('sale')) {
             // href is products
-            $('.menu-list li a[href="/dangling_carts"]').addClass('is-active');
+            $('.menu-list li a[href="/sales"]').addClass('is-active');
         }
     });
 </script>
