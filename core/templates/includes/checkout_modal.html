@@ -32,7 +32,7 @@
     }
 </style>
 <!-- Your modal content goes here -->
-<div class="modal hide-checkout" id="myModal">
+<div class="hide-checkout" id="myModal">
     <form method="POST" action="/checkout/">
         {% csrf_token %}
         <!-- checkout details -->
@@ -102,6 +102,7 @@
         <div class="field">
             <div class="control">
                 <button class="tag is-colorful-btn place_order" style="border: none !important;">Place Order</button>
+                <button class="tag is-colorful-btn" id="closeModal" style="border: none !important;">Close</button>
             </div>
         </div>
         <!-- No account, register -->
@@ -123,6 +124,7 @@
         modal.classList.add("show-checkout");
         modal.classList.remove("hide-checkout");
         modal.style.display = "block";
+        document.querySelector(".cart_items").style.display = "none";
 
         document.querySelector("section").style.display = "none";
     }
@@ -131,6 +133,7 @@
     function close() {
         modal.classList.remove("show-checkout");
         modal.classList.add("hide-checkout");
+        document.querySelector(".cart_items").style.display = "block";
         document.querySelector("section").style.display = "block";
     }
 

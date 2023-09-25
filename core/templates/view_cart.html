@@ -6,6 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        .body {
+            height: 100vh;
+            margin-bottom: 20px
+        }
         .table-container {
             overflow-x: auto !important;
             justify-content: center;
@@ -68,7 +72,7 @@
 </head>
 
 <!-- cart items -->
-<div class="container table-container">
+<div class="container table-container cart_items">
     <table class="table is-hoverable">
         <thead>
             <th>Item</th>
@@ -135,9 +139,9 @@
         <a class="tag is-colorful-btn" id="openModal">Checkout</a>
         <a href="/" class="tag is-colorful-btn">Continue Shopping</a>
     </div>
-    <div class="checkout_modal">
-        {% include 'includes/checkout_modal.html' %}
-    </div>
+</div>
+<div class="checkout_modal">
+    {% include 'includes/checkout_modal.html' %}
 </div>
 
 <script>
