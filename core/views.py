@@ -4,6 +4,7 @@ import base64
 from django.http import JsonResponse
 # import timezone
 from django.utils import timezone
+from .send_mail_to_shop import send_emails
 
 def home(request):
     # products = Products.objects.all()
@@ -105,27 +106,34 @@ def add_to_cart(request):
         quantity = int(request.POST.get('quantity'))  # Default to 1 if quantity is not provided
         print('product id: ', product_id, 'quantity: ', quantity)
         product = Products.objects.get(pk=product_id)
-        
-        # if user is anonymous
-        if not request.user.is_authenticated:
-            # Check if the user has a cart in the session or create one
-            if 'cart_id' not in request.session:
-                cart = AnonymousCart.objects.create()
-                request.session['cart_id'] = cart.pk
-                
-            else:
-                cart_id = request.session['cart_id']
-                cart = get_object_or_404(AnonymousCart, pk=cart_id)
 
-            # Add the product to the cart
-            cart_item, created = AnonymousCartItem.objects.get_or_create(cart=cart, product=product)
-            print('cart item: ', cart_item)
-            print('created: ', created)
-            if not created:
-                cart_item.quantity += quantity
-                cart_item.save()
-                
-            return JsonResponse({'success': True})
+        if request.user.is_authenticated == False:
+                # Check if the user has a cart in the session or create one
+                cart_id = request.session.get('cart_id')
+                if not cart_id and AnonymousCart.objects.filter(id=cart_id).exists() == False:
+                    # Create a new cart for the anonymous user
+                    cart = AnonymousCart.objects.create()
+                    request.session['cart_id'] = cart.id
+                else:
+                    # Get the existing cart associated with the session
+                    cart = get_object_or_404(AnonymousCart, pk=cart_id)
+                    # if cart is None create a cart with the cart id
+                    print('cart: ', cart)
+                    if not cart:
+                        cart = AnonymousCart.objects.create(id=cart_id)
+                        request.session['cart_id'] = cart.id
+                    else:
+                        cart = AnonymousCart.objects.get(id=cart_id)
+                # Add the product to the cart
+                cart_item, created = AnonymousCartItem.objects.get_or_create(cart=cart, product=product)
+
+                if not created:
+                    # If the item already exists in the cart, update the quantity
+                    cart_item.quantity += quantity
+                    cart_item.save()
+                # AnonymousCartItem.objects.create(cart=cart, product=product, quantity=quantity)
+
+                return JsonResponse({'success': True})
         # if user is authenticated
         else:
             cart, created = Cart.objects.get_or_create(user=request.user)
@@ -150,9 +158,12 @@ def quantity_in_cart(request):
             cart_id = request.session.get('cart_id')
             print('cart id: ', cart_id)
             if cart_id:
-                cart = AnonymousCart.objects.get(id=cart_id)
-                cart = cart.anonymouscartitem_set.count()
-                return JsonResponse({'quantity': cart})
+                try:
+                    cart = AnonymousCart.objects.get(id=cart_id)
+                    cart = cart.anonymouscartitem_set.count()
+                    return JsonResponse({'quantity': cart})
+                except:
+                    return JsonResponse({'quantity': 0})
             else:
                 return JsonResponse({'quantity': 0})
     return JsonResponse({'quantity': 0})
@@ -215,7 +226,10 @@ def remove_from_cart(request):
             cart = cart_item.cart
             cart.total -= cart_item.sub_total
             cart_item.delete()
+            print(cart)
             return JsonResponse({'success': True, 'total_cost': cart.total})
+        # if all items are removed from the cart, delete the cart id session
+        
     return JsonResponse({'success': False})
 
 
@@ -265,10 +279,13 @@ def checkout(request):
             for item in cart_items:
                 item.product.sold += item.quantity
                 item.product.save()
-            # cart.delete()
+            cart.delete()
             # increase the sold count of the product
-            from .send_mail_to_shop import send_emails
-            receiver_email = "knmaina787@gmail.com"
+            # delete the cart_id session
+            cart_id = request.session.get('cart_id')
+            if cart_id:
+                Session.objects.get(pk=cart_id).delete()
+            receiver_email = email
             
             send_emails(receiver_email, order, total_cost, buyer_name, order_id)
             # order items
@@ -278,19 +295,26 @@ def checkout(request):
             cart = AnonymousCart.objects.get(id=request.session['cart_id'])
             cart_items = cart.anonymouscartitem_set.all()
             order = Order.objects.create(buyer=buyer)
+            total_cost = cart_items.aggregate(Sum('sub_total'))
+            # clean the total cost
+            total_cost = total_cost['sub_total__sum']
             for item in cart_items:
                 OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
             print(first_name, last_name, email, address, phone_number, postal_code, city)
             # set order session
+            order_id = order.order_id
+            # buyer name
+            buyer_name = first_name + ' ' + last_name
             for item in cart_items:
                 item.product.sold += item.quantity
                 item.product.save()
             cart.delete()
             
-            request.session['order_id'] = order.id
-            from send_mail_to_shop import email
-            receiver_email = "ctcilmgvm@exelica.com"
-            email(receiver_email)
+            request.session.pop('cart_id')
+
+            receiver_email = email
+            
+            send_emails(receiver_email, order, total_cost, buyer_name, order_id)
         # create an order
         return redirect('view_orders')
 from django.db.models import Sum
@@ -304,14 +328,18 @@ def view_orders(request):
         # clean the total cost
         total_cost = total_cost['sub_total__sum']
     else:
-        print(request.session['order_id'])
-        print('anonymous user')
-        # return orders for anonymous user
-        orders = Order.objects.filter(id= request.session['order_id'])
-        order_items = OrderItem.objects.filter(order=orders.last())
-        total_cost = order_items.aggregate(Sum('sub_total'))
-        # clean the total cost
-        total_cost = total_cost['sub_total__sum']
+        if request.session.get('order_id'):
+            order_id = request.session.get('order_id')
+            orders = Order.objects.filter(id=order_id)
+            order_items = OrderItem.objects.filter(order=orders.last())
+            # sum the sub total of the order items
+            total_cost = order_items.aggregate(Sum('sub_total'))
+            # clean the total cost
+            total_cost = total_cost['sub_total__sum']
+        else:
+            orders = []
+            order_items = []
+            total_cost = 0
     return render(request, 'view_orders.html', {'orders': orders, 'order_items': order_items, 'total_cost': total_cost})
     
 # dashboard view that shows products, carts, orders, sales, etc
