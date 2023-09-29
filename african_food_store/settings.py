@@ -91,24 +91,24 @@ WSGI_APPLICATION = 'african_food_store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # mysql database
-# DATABASES = {
-# 'default': {
-#     'ENGINE': 'django.db.backends.mysql',
-#     'NAME': 'Kmaina385$saafsz',
-#     'USER': 'Kmaina385',
-#     'PASSWORD': 'MySQL password',
-#     'HOST': 'Kmaina385.mysql.pythonanywhere-services.com', 
-#     'PORT': '3306'
-# }
-# }
+DATABASES = {
+'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'Kmaina385$saafsz',
+    'USER': 'Kmaina385',
+    'PASSWORD': 'MySQL password',
+    'HOST': 'Kmaina385.mysql.pythonanywhere-services.com', 
+    'PORT': '3306'
+}
+}
 
 
 # Password validation
