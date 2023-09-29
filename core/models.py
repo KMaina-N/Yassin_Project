@@ -150,6 +150,7 @@ class BuyerDeliveryDetails(models.Model):
 
 # order based on the cart include the details of the buyer entered in the checkout form
 class Order(models.Model):
+    order_id = models.SlugField(max_length=100, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     delivered = models.BooleanField(default=False)
     # cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True)
@@ -180,6 +181,10 @@ class Order(models.Model):
         cart = Cart.objects.filter(buyer=self.buyer, ordered=False)
         return cart
     
+    def save(self, *args, **kwargs):
+        # order id by having random number and text with hypen in between 4 digits
+        self.order_id = str(random.randint(1000, 9999)) + '-' + random.choice(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']) + '-' + str(random.randint(1000, 9999))
+        super(Order, self).save(*args, **kwargs)
     # def save(self, *args, **kwargs):
     #     # create username by concatenating first name and last name and adding a random number at the end
     #     self.cost_of_order = self.get_total_cost()

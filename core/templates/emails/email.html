@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Order Details</title>
+</head>
+<body>
+    <h1>Your Order Details</h1>
+    <p>Order ID: {{ order.id }}</p>
+    <p>Order Date: {{ order.date_ordered }}</p>
+
+    <h2>Order Items:</h2>
+    <ul>
+        {% for item in order.items.all %}
+            <li>
+                Product: {{ item.product.name }} - 
+                Quantity: {{ item.quantity }} - 
+                Price per item: ${{ item.product.price }} - 
+                Subtotal: $<strong id="sub_total">{{ item.sub_total }}</strong>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Order Summary:</h2>
+
+    <p>Total Price: ${{ total_cost }}</p>
+</body>
+</html>

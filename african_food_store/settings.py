@@ -91,11 +91,23 @@ WSGI_APPLICATION = 'african_food_store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# mysql database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'Kmaina385$saafsz',
+    'USER': 'Kmaina385',
+    'PASSWORD': 'MySQL password',
+    'HOST': 'Kmaina385.mysql.pythonanywhere-services.com', 
+    'PORT': '3306'
+}
 }
 
 
@@ -145,3 +157,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "kelvinmaina547@gmail.com"
+EMAIL_HOST_PASSWORD = "wuco mwbj grzq gqrb"

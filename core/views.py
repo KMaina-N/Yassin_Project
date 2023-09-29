@@ -6,15 +6,20 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 def home(request):
-    products = Products.objects.all()
+    # products = Products.objects.all()
+    # products that are not out of stock and top 5 sold products
+    products = Products.objects.filter(stock__gt=0).order_by('-sold')
+    # return only the top 5 products
+    products = products[:5]
     print(products)
     banner = PromoItems.objects.all().last()
     
     if banner:
         banner = banner
         banner = base64.b64encode(banner.promo_image).decode('utf-8')
-    # top 5 best offers
-    best_offers = products[:5]
+    # top 5 best offers are products with discount with the highest discount percentage
+    best_offers = Products.objects.filter(discount=True).order_by('-discount_percentage')
+    best_offers = best_offers[:5]
     # create a session for the user and give them a unique key
     unique_key = generate_unique_key()
     request.session['unique_key'] = unique_key
@@ -92,32 +97,6 @@ def generate_unique_key():
     import uuid
     return str(uuid.uuid4())
 from django.shortcuts import get_object_or_404
-# def add_to_cart(request, product_id):
-#     if request.method == 'GET':
-#         cart_key = request.session.get('cart_key', None)
-#         if not cart_key:
-#             cart_key = generate_unique_key()
-#             request.session['cart_key'] = cart_key
-
-#         product = get_object_or_404(Products, pk=product_id)
-#         existing_cart = Cart.objects.filter(cart_key=cart_key, ordered=False).first()
-#         if existing_cart:
-#             # Update the existing cart item's quantity instead of creating a new one
-#             existing_cart.quantity += 1
-#             existing_cart.save()
-#         else:
-#             Cart.objects.create(cart_key=cart_key, buyer='example', ordered=False, quantity=1, product=product)
-#         return HttpResponse('Cart created')
-# def add_to_cart(request, product_id):
-#     product = Products.objects.get(pk=product_id)
-#     cart, created = Cart.objects.get_or_create(user=request.user)
-#     cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product)
-    
-#     if not item_created:
-#         cart_item.quantity += 1
-#         cart_item.save()
-    
-#     return HttpResponse('Cart created')
 from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def add_to_cart(request):
@@ -133,6 +112,7 @@ def add_to_cart(request):
             if 'cart_id' not in request.session:
                 cart = AnonymousCart.objects.create()
                 request.session['cart_id'] = cart.pk
+                
             else:
                 cart_id = request.session['cart_id']
                 cart = get_object_or_404(AnonymousCart, pk=cart_id)
@@ -168,7 +148,7 @@ def quantity_in_cart(request):
         else:
             print('anonymous user')
             cart_id = request.session.get('cart_id')
-            print(cart_id)
+            print('cart id: ', cart_id)
             if cart_id:
                 cart = AnonymousCart.objects.get(id=cart_id)
                 cart = cart.anonymouscartitem_set.count()
@@ -271,15 +251,27 @@ def checkout(request):
             cart = Cart.objects.get(user=request.user)
             cart_items = cart.cartitem_set.all()
             order = Order.objects.create(buyer_id_order=request.user, buyer=buyer)
+            # cost of the order
+            total_cost = cart_items.aggregate(Sum('sub_total'))
+            # clean the total cost
+            total_cost = total_cost['sub_total__sum']
 
+            order_id = order.order_id
+            # buyer name
+            buyer_name = first_name + ' ' + last_name
             for item in cart_items:
                 OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
             # delete the cart
             for item in cart_items:
                 item.product.sold += item.quantity
                 item.product.save()
-            cart.delete()
+            # cart.delete()
             # increase the sold count of the product
+            from .send_mail_to_shop import send_emails
+            receiver_email = "knmaina787@gmail.com"
+            
+            send_emails(receiver_email, order, total_cost, buyer_name, order_id)
+            # order items
             
             return redirect('view_orders')
         else:
@@ -296,6 +288,9 @@ def checkout(request):
             cart.delete()
             
             request.session['order_id'] = order.id
+            from send_mail_to_shop import email
+            receiver_email = "ctcilmgvm@exelica.com"
+            email(receiver_email)
         # create an order
         return redirect('view_orders')
 from django.db.models import Sum

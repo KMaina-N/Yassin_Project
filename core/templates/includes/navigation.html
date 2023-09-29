@@ -49,24 +49,32 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div class="navbar-end">
-            <div class="navbar-item">
-                <div class="account">
-                    
-                    <a class="tag is-link">
-                        <i class="fa-solid fa-lock"></i>
-                        Sign in
-                    </a>
-                    <a class="tag is-light">
-                        <i class="fa-solid fa-user-plus"></i>
-                        Sign up
-                    </a>
-                </div>
-            </div>
-        </div> -->
     </div>
 </nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdownLinks = document.querySelectorAll('.navbar-item.has-dropdown');
+        
+        dropdownLinks.forEach(link => {
+            const dropdownContent = link.querySelector('.navbar-dropdown');
+
+            link.addEventListener('click', (event) => {
+                event.stopPropagation();  // Prevent the click event from propagating to the document
+
+                // Toggle the is-active class on the dropdownContent
+                dropdownContent.classList.toggle('is-hidden');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdownLinks.forEach(link => {
+                const dropdownContent = link.querySelector('.navbar-dropdown');
+                dropdownContent.classList.add('is-hidden');
+            });
+        });
+    });
+</script>
 
 <script>
     var product_category = document.querySelectorAll('.navbar-dropdown .navbar-item');
